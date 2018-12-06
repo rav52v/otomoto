@@ -29,6 +29,7 @@ public class TestSuite_1 {
         log.logInfo("Navigated to filtered search page {" + config.getSearchLinkAddress() + "}");
 
         SearchPage searchPage = new SearchPage();
+        searchPage.mapAllOffers();
 
 
 

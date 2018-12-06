@@ -10,11 +10,12 @@ import java.util.Random;
 public class DataBaseReader {
 	
 	private Connection con;
-	private final String CON_URL = "jdbc:sqlite:src//test//resources//My_Own_DataBase.db";
-	
+	private String conUrl;
+
 	public DataBaseReader() {
+		conUrl = "jdbc:sqlite:src//test//resources//My_Own_DataBase.db";
 		try {
-			con = DriverManager.getConnection(CON_URL);
+			con = DriverManager.getConnection(conUrl);
 			con.setAutoCommit(true);
 		}
 		catch (SQLException e){
