@@ -17,20 +17,20 @@ public abstract class PageBase {
         PageFactory.initElements(driver.getDriver(), this);
     }
 
-    protected void click(WebElement element){
+    protected void click(WebElement element) {
         new Actions(driver.getDriver()).moveToElement(element).click().perform();
     }
 
-    protected void waitAndClick(WebElement element){
+    protected void waitAndClick(WebElement element) {
         new WebDriverWait(driver.getDriver(), 10, 10).until(ExpectedConditions.visibilityOf(element));
         new Actions(driver.getDriver()).moveToElement(element).click().perform();
     }
 
-    protected void waitForElement(WebElement element){
+    protected void waitForElement(WebElement element) {
         new WebDriverWait(driver.getDriver(), 10, 10).until(ExpectedConditions.visibilityOf(element));
     }
 
-    protected boolean isElementFound(List<WebElement> element){
+    protected boolean isElementFound(List<WebElement> element) {
         return element.size() > 0;
     }
 }
