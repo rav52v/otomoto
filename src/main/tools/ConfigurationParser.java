@@ -8,6 +8,7 @@ public class ConfigurationParser {
     private String propertiesFileName;
     private String linkAddress;
     private int implicitlyWaitTime;
+    private String searchLinkAddress;
 
     private Properties prop;
 
@@ -15,14 +16,19 @@ public class ConfigurationParser {
         this.propertiesFileName = "config.properties";
         this.linkAddress = getParameterValue("linkAddress");
         this.implicitlyWaitTime = Integer.parseInt(getParameterValue("implicitlyWaitTime"));
+        this.searchLinkAddress = getParameterValue("searchLinkAddress");
     }
 
     public String getLinkAddress() {
         return this.linkAddress;
     }
 
-    public int getimplicitlyWaitTime() {
+    public int getImplicitlyWaitTime() {
         return this.implicitlyWaitTime;
+    }
+
+    public String getSearchLinkAddress() {
+        return this.searchLinkAddress;
     }
 
     private String getParameterValue(String name){

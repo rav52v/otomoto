@@ -1,5 +1,7 @@
 package test;
 
+import main.poms.MainPage;
+import main.poms.SearchPage;
 import main.tools.ConfigurationParser;
 import main.utils.Driver;
 import main.utils.Log;
@@ -14,12 +16,19 @@ public class TestSuite_1 {
         log.logInfo("Config created");
 
         Driver driver = new Driver();
-        log.logInfo("Driver created {" + config.getLinkAddress() + "}");
+        log.logInfo("Driver created, starts with {" + config.getLinkAddress() + "}");
 
-        TestBase base = new TestBase();
-        base.beforeTest();
+        driver.beforeTest();
         log.logInfo("Opened new driver");
 
+        MainPage mainPage = new MainPage();
+        mainPage.acceptCookiesClick();
+        log.logInfo("Clicked accept cookies button");
+
+        driver.getDriver().get(config.getSearchLinkAddress());
+        log.logInfo("Navigated to filtered search page {" + config.getSearchLinkAddress() + "}");
+
+        SearchPage searchPage = new SearchPage();
 
 
 
@@ -34,7 +43,7 @@ public class TestSuite_1 {
 
 
 
-        base.afterTest();
+        driver.afterTest();
         log.logInfo("Driver is closed, program has finished.");
     }
 
