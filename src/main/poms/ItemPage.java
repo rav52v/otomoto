@@ -154,6 +154,12 @@ public class ItemPage extends PageBase {
                         || key.equals("aso") || key.equals("zabytek") || key.equals("bezwypadkowy")){
                     parametersMap.replace(key, "1");
                 }
+                else if(key.equals("moc")){
+                    parametersMap.replace(key, parametersMap.get(key).replaceAll(" KM| ", ""));
+                }
+                else if(key.equals("pojemnosc")){
+                    parametersMap.replace(key, parametersMap.get(key).replaceAll(" cm3| ", ""));
+                }
             }
         }
     }

@@ -19,15 +19,15 @@ Model pojazdu, model -string
 Wersja, wersja -string
 Rok produkcji, rok -int
 Przebieg, przebieg -int
-Pojemnoœæ skokowa, pojemnosc -string
+Pojemnoœæ skokowa, pojemnosc -int
 VIN, vin -string
 Rodzaj paliwa, paliwo -string
-Moc, moc -string
+Moc, moc -int
 Skrzynia biegów, skrzynia -string
 Uszkodzony, uszkodzony -int
 Napêd, naped -string
 Typ, typ -string
-Liczba drzwi, drzwi -string
+Liczba drzwi, drzwi -int
 Liczba miejsc, miejsca -int
 Kierownica po prawej (Anglik), anglik -int
 Kolor, kolor -string

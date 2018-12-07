@@ -32,10 +32,11 @@ public class TestSuite_1 {
 //        searchPage.mapAllOffers();
 //        log.logInfo("Mapped all ids with their links");
 
-        driver.getDriver().get("https://www.otomoto.pl/oferta/mercedes-benz-klasa-s-63-amg-2010-night-vision-ID6BtpEy.html#9c7efce148");
+        driver.getDriver().get("https://www.otomoto.pl/oferta/ford-focus-ford-focus-mk2-1-8-tdci-ghia-ID6BvTkE.html");
 
         ItemPage itemPage = new ItemPage();
         itemPage.fillParametersMap();
+
 
 
 
