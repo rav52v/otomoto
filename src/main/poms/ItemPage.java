@@ -139,12 +139,21 @@ public class ItemPage extends PageBase {
         }
     }
 
-    private void fillParametersMap() {
+    //wypełnienie mapy parametrów oraz dostosowanie danych typu int pod bazę danych
+    public void fillParametersMap() {
         for (int i = 0; i < offerParameters.size(); i++) {
             String paramName = offerParameters.get(i).findElement(By.tagName("span")).getText().trim();
             String paramValue = offerParameters.get(i).findElement(By.tagName("div")).getText().trim();
             if(ParamNames.AVAILABLE_PARAMETERS.ifContains(paramName)){
-                parametersMap.put(ParamNames.AVAILABLE_PARAMETERS.transformParamName(paramName), paramValue);
+                String key = ParamNames.AVAILABLE_PARAMETERS.transformParamName(paramName);
+                parametersMap.put(key, paramValue);
+                if (key.equals("przebieg")){
+                    parametersMap.replace(key, parametersMap.get(key).replaceAll(" km| ", ""));
+                }
+                else if(key.equals("uszkodzony") || key.equals("anglik") || key.equals("pl") || key.equals("tuning")
+                        || key.equals("aso") || key.equals("zabytek") || key.equals("bezwypadkowy")){
+                    parametersMap.replace(key, "1");
+                }
             }
         }
     }
