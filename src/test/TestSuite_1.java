@@ -2,12 +2,9 @@ package test;
 
 import main.poms.ItemPage;
 import main.poms.MainPage;
-import main.poms.SearchPage;
 import main.tools.ConfigurationParser;
 import main.utils.Driver;
 import main.utils.Log;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 
 public class TestSuite_1 {
 
@@ -35,10 +32,10 @@ public class TestSuite_1 {
 //        searchPage.mapAllOffers();
 //        log.logInfo("Mapped all ids with their links");
 
-        driver.getDriver().get("https://www.otomoto.pl/oferta/chrysler-grand-voyager-grand-voyager-2-8-crd-7-miejsc-navi-dvd-webasto-komplet-kol-ID6BuQWs.html#de0c1237ce");
+        driver.getDriver().get("https://www.otomoto.pl/oferta/mercedes-benz-klasa-s-63-amg-2010-night-vision-ID6BtpEy.html#9c7efce148");
 
         ItemPage itemPage = new ItemPage();
-        System.out.println(itemPage.getDateOfIssue());
+        itemPage.fillParametersMap();
 
 
 

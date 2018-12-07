@@ -1,0 +1,42 @@
+--------------------g³ówne
+location -string
+mobile -int
+sellerName -string
+dateOfIssue -string
+
+--------------------inne
+Wyposa¿enie, equipment -string(text)
+Opis, description -string(text)
+Cena, price -int
+Tytu³ og³oszenia, title -string
+ID, offerId -long
+
+--------------------parametry oferty
+Oferta od, ofertaOd -string
+Kategoria, kategoria -string
+Marka pojazdu, marka -string
+Model pojazdu, model -string
+Wersja, wersja -string
+Rok produkcji, rok -int
+Przebieg, przebieg -int
+Pojemnoœæ skokowa, pojemnosc -string
+VIN, vin -string
+Rodzaj paliwa, paliwo -string
+Moc, moc -string
+Skrzynia biegów, skrzynia -string
+Uszkodzony, uszkodzony -int
+Napêd, naped -string
+Typ, typ -string
+Liczba drzwi, drzwi -string
+Liczba miejsc, miejsca -int
+Kierownica po prawej (Anglik), anglik -int
+Kolor, kolor -string
+Pierwsza rejestracja, pierwszaRejestracja -string
+Kraj pochodzenia, krajPochodzenia -string
+Numer rejestracyjny pojazdu, numerRej -string
+Zarejestrowany w Polsce, pl -int
+Tuning, tuning -int
+Serwisowany w ASO, aso -int
+Zarejestrowany jako zabytek, zabytek -int
+Bezwypadkowy, bezwypadkowy -int
+Stan, stan -string

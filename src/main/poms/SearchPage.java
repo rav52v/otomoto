@@ -38,7 +38,7 @@ public class SearchPage extends PageBase {
         do {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
             click(nextPageBtn.get(0));
-        } while (isElementFound(nextPageBtn));
+        } while (isElementFound(nextPageBtn, 1000));
         addOffersFromCurrentPageToMap(idAndLinkHolder);
     }
 }
