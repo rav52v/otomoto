@@ -9,8 +9,11 @@ public class MainPage extends PageBase {
     @FindBy (css = "a.agree-button.cookiesBarClose")
     private WebElement cookiesBtn;
 
+    public MainPage() {
+        acceptCookiesClick();
+    }
 
-    public void acceptCookiesClick(){
+    private void acceptCookiesClick(){
         waitAndClick(cookiesBtn);
     }
 

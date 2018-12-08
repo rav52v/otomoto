@@ -2,6 +2,7 @@ package test;
 
 import main.poms.ItemPage;
 import main.poms.MainPage;
+import main.poms.SearchPage;
 import main.tools.ConfigurationParser;
 import main.utils.Driver;
 import main.utils.Log;
@@ -15,27 +16,31 @@ public class TestSuite_1 {
         ConfigurationParser config = new ConfigurationParser();
         log.logInfo("Config created");
 
+        Long start = System.currentTimeMillis();
         Driver driver = new Driver();
-        log.logInfo("Driver created, starts with {" + config.getLinkAddress() + "}");
-
-        driver.beforeTest();
         log.logInfo("Opened new driver");
+        driver.beforeTest();
+        log.logInfo("Driver created, starts with {" + config.getLinkAddress() + "}");
+        log.logInfo("Driver opened, and loaded in {" + (System.currentTimeMillis()-start) + " milliseconds}");
 
-        MainPage mainPage = new MainPage();
-        mainPage.acceptCookiesClick();
+        new MainPage();
         log.logInfo("Clicked accept cookies button");
 
-//        driver.getDriver().get(config.getSearchLinkAddress());
-//        log.logInfo("Navigated to filtered search page {" + config.getSearchLinkAddress() + "}");
-//
-//        SearchPage searchPage = new SearchPage();
-//        searchPage.mapAllOffers();
-//        log.logInfo("Mapped all ids with their links");
 
-        driver.getDriver().get("https://www.otomoto.pl/oferta/ford-focus-ford-focus-mk2-1-8-tdci-ghia-ID6BvTkE.html");
+        driver.getDriver().get(config.getSearchLinkAddress());
+        log.logInfo("Navigated to filtered search page {" + config.getSearchLinkAddress() + "}");
+
+        log.logInfo("Mapping offer ids started...");
+        start = System.currentTimeMillis();
+        SearchPage searchPage = new SearchPage();
+        log.logInfo("Mapped offer ids with their links");
+        log.logInfo("Mapping {" + searchPage.getMappedLinksSize() + "} offers took {" + (System.currentTimeMillis()-start)
+                + " milliseconds}, which is 1 offer per {" + ((System.currentTimeMillis()-start)/searchPage.getMappedLinksSize()) + "} milliseconds");
+
+        driver.getDriver().get("https://www.otomoto.pl/oferta/renault-captur-renault-captur-zen-tce-90-pojazd-demonstracyjny-ID6AU86r.html");
 
         ItemPage itemPage = new ItemPage();
-        itemPage.fillParametersMap();
+        System.out.println(itemPage.getDescription());
 
 
 
@@ -49,8 +54,7 @@ public class TestSuite_1 {
 
 
 
-
-        driver.afterTest();
+        driver.afterTest(0);
         log.logInfo("Driver is closed, program has finished.");
     }
 

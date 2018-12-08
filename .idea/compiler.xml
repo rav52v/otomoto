@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="AutomationPractice" />
         <module name="Otomoto" />
+        <module name="otomoto" />
       </profile>
     </annotationProcessing>
   </component>

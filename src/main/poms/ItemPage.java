@@ -38,6 +38,7 @@ public class ItemPage extends PageBase {
                     return ParamNames.TRANSFORM_TO_PARAMETERS.availableParameters[i];
                 }
             }
+            //nigdy nie zwraca null
             return null;
         }
     }
@@ -74,6 +75,9 @@ public class ItemPage extends PageBase {
     @FindBy(css = "#description > div")
     private WebElement description;
 
+    @FindBy(css = "span.showPhoneButton")
+    private List<WebElement> dislayNumberList;
+
     @FindBy(css = "h4.offer-features__title")
     private List<WebElement> equipment;
 
@@ -88,6 +92,7 @@ public class ItemPage extends PageBase {
 
     public ItemPage() {
         parametersMap = new HashMap<>();
+        fillParametersMap();
     }
 
     private String getLocation() {
@@ -119,16 +124,21 @@ public class ItemPage extends PageBase {
         return Long.parseLong(this.offerId.getText());
     }
 
-    private String getDescription() {
-        if (isElementFound(readMoreBtn, 1000)) {
+    public String getDescription() {
+        if (isElementFound(readMoreBtn, 100)) {
             click(readMoreBtn.get(0));
+        }
+        if (isElementFound(dislayNumberList, 0)) {
+            for(WebElement displayNumber : dislayNumberList){
+                click(displayNumber);
+            }
         }
         return description.getText();
     }
 
     // może zwracać null //
-    private String getEquipment() {
-        if (isElementFound(equipment, 800)) {
+    public String getEquipment() {
+        if (isElementFound(equipment, 300)) {
             StringBuilder sb = new StringBuilder();
             for (WebElement feature : equipmentList) {
                 sb.append(feature.getText().trim()).append(", ");
@@ -140,7 +150,7 @@ public class ItemPage extends PageBase {
     }
 
     //wypełnienie mapy parametrów oraz dostosowanie danych typu int pod bazę danych
-    public void fillParametersMap() {
+    private void fillParametersMap() {
         for (int i = 0; i < offerParameters.size(); i++) {
             String paramName = offerParameters.get(i).findElement(By.tagName("span")).getText().trim();
             String paramValue = offerParameters.get(i).findElement(By.tagName("div")).getText().trim();
