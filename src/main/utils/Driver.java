@@ -2,12 +2,9 @@ package main.utils;
 
 import main.tools.ConfigurationParser;
 import org.openqa.selenium.PageLoadStrategy;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -34,13 +31,12 @@ public class Driver {
             options.addArguments("--disable-popup-blocking");
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
-            options.addArguments("--headless"); /// !!
+            options.setHeadless(true);
             options.addArguments("--disable-gpu");
             options.addArguments("--disable-gpu-sandbox");
             options.addArguments("--disable-gpu-program-cache");
             options.addArguments("--disable-gpu-watchdog");
             options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
-
 
             driver = new ChromeDriver(options);
             driver.get(new ConfigurationParser().getLinkAddress());

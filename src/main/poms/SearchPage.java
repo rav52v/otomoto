@@ -1,18 +1,14 @@
 package main.poms;
 
-import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class SearchPage extends PageBase {
 
@@ -25,6 +21,8 @@ public class SearchPage extends PageBase {
     private List<String> idList;
     private Log log;
     private int allOffers;
+    private int mappedOffersSize;
+    private long startTime;
 
     @FindBy(css = "div.offers.list > article")
     private List<WebElement> offersList;
@@ -36,15 +34,17 @@ public class SearchPage extends PageBase {
     private WebElement offersCounter;
 
     public SearchPage() {
-        allOffers = getAllOffers();
-        log = new Log();
-        mapAllOffers();
+        this.allOffers = getAllOffers();
+        this.log = new Log();
+        this.startTime = System.currentTimeMillis();
+        this.mapAllOffers();
     }
 
-    private void addOffersFromCurrentPageToMap(Map<String, String> map) {
+    private void addOffersFromCurrentPageToMap(Map<String, String> map, List<String> list) {
         for (WebElement offer : offersList) {
             map.put(offer.getAttribute("data-ad-id"), offer.getAttribute("data-href"));
-            idList.add(offer.getAttribute("data-ad-id"));
+            list.add(offer.getAttribute("data-ad-id"));
+            mappedOffersSize = list.size();
         }
     }
 
@@ -53,20 +53,26 @@ public class SearchPage extends PageBase {
         idAndLinkHolder = new HashMap<>();
         idList = new ArrayList<>();
         do {
-            addOffersFromCurrentPageToMap(idAndLinkHolder);
+            addOffersFromCurrentPageToMap(idAndLinkHolder, idList);
             click(nextPageBtn.get(0));
-            if ((allOffers - getMappedLinksSize()) % 25 == 0) {
-                log.logInfo("Operation is done in {" + String.format("%.2f", ((Double) (100.0 / (allOffers / getMappedLinksSize())))) + "%} ...");
+            if ((allOffers - getMappedOffersSize()) % 5 == 0){
+                double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) getMappedOffersSize()
+                        / (double) allOffers))).replaceAll(",", "."));
+                double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
+                double timeLeftInMinutes = (100.0 / percentDone) * (passedTimeInMinutes) - passedTimeInMinutes + 1.0;
+                log.logInfo("Operation is done in {" + percentDone + "%}, mapped offers {" + getMappedOffersSize() +
+                        "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
-        } while (isElementFound(nextPageBtn, 500));
-        addOffersFromCurrentPageToMap(idAndLinkHolder);
+        } while (isElementFound(nextPageBtn, 5000));
+        addOffersFromCurrentPageToMap(idAndLinkHolder, idList);
     }
 
-    public int getMappedLinksSize() {
-        return idAndLinkHolder.size();
+    public int getMappedOffersSize() {
+        return this.mappedOffersSize;
     }
 
     private int getAllOffers() {
         return Integer.parseInt(offersCounter.getText().replaceAll("[)( ]", ""));
     }
+
 }

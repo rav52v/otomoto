@@ -33,14 +33,12 @@ public class TestSuite_1 {
         log.logInfo("Mapping offer ids started...");
         start = System.currentTimeMillis();
         SearchPage searchPage = new SearchPage();
-        log.logInfo("Mapped offer ids with their links");
-        log.logInfo("Mapping {" + searchPage.getMappedLinksSize() + "} offers took {" + (System.currentTimeMillis()-start)
-                + " milliseconds}, which is 1 offer per {" + ((System.currentTimeMillis()-start)/searchPage.getMappedLinksSize()) + "} milliseconds");
+        log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis()-start)/60000
+                + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis()-start)/searchPage.getMappedOffersSize()) + "} milliseconds");
 
         driver.getDriver().get("https://www.otomoto.pl/oferta/renault-captur-renault-captur-zen-tce-90-pojazd-demonstracyjny-ID6AU86r.html");
 
         ItemPage itemPage = new ItemPage();
-        System.out.println(itemPage.getDescription());
 
 
 

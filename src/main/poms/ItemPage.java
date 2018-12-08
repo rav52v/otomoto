@@ -21,21 +21,23 @@ public class ItemPage extends PageBase {
                 "drzwi", "miejsca", "anglik", "kolor", "pierwszaRejestracja",
                 "krajPochodzenia", "numerRej", "pl", "tuning",
                 "aso", "zabytek", "bezwypadkowy", "stan");
-        private String[] availableParameters;
+
+        private String[] values;
+
         ParamNames(String...strings){
-            availableParameters = strings;
+            values = strings;
         }
         private boolean ifContains(String value){
-            for (String param : availableParameters) {
+            for (String param : values) {
                 if (param.equals(value))
                     return true;
             }
             return false;
         }
         private String transformParamName(String value){
-            for(int i = 0 ; i<availableParameters.length ; i++){
-                if(availableParameters[i].equals(value)){
-                    return ParamNames.TRANSFORM_TO_PARAMETERS.availableParameters[i];
+            for(int i = 0; i< values.length ; i++){
+                if(values[i].equals(value)){
+                    return TRANSFORM_TO_PARAMETERS.values[i];
                 }
             }
             //nigdy nie zwraca null
@@ -84,10 +86,8 @@ public class ItemPage extends PageBase {
     @FindBy(css = "div.offer-features__row li.offer-features__item")
     private List<WebElement> equipmentList;
 
-    // OFFER PARAMETERS //
     @FindBy(css = "#parameters > ul li.offer-params__item")
     private List<WebElement> offerParameters;
-    //\OFFER PARAMETERS\//
 
 
     public ItemPage() {
@@ -99,9 +99,9 @@ public class ItemPage extends PageBase {
         return this.location.getText().trim();
     }
 
-    private int getMobile() {
+    private String getMobile() {
         mobileBtn.click();
-        return Integer.parseInt(this.mobile.getText().replaceAll("[ ]", ""));
+        return this.mobile.getText().replaceAll("[ ]", "");
     }
 
     private String getSellerName() {
@@ -112,37 +112,34 @@ public class ItemPage extends PageBase {
         return this.dateOfIssue.getText().trim();
     }
 
-    private int getPrice() {
-        return Integer.parseInt(this.price.getAttribute("data-price").replaceAll("[ ]", ""));
+    private String getPrice() {
+        return this.price.getAttribute("data-price").replaceAll("[ ]", "");
     }
 
     private String getTitle() {
         return this.title.getText().trim();
     }
 
-    private long getOfferId() {
-        return Long.parseLong(this.offerId.getText());
+    private String getOfferId() {
+        return this.offerId.getText();
     }
 
-    public String getDescription() {
-        if (isElementFound(readMoreBtn, 100)) {
+    private String getDescription() {
+        if (isElementFound(readMoreBtn, 100))
             click(readMoreBtn.get(0));
-        }
         if (isElementFound(dislayNumberList, 0)) {
-            for(WebElement displayNumber : dislayNumberList){
+            for(WebElement displayNumber : dislayNumberList)
                 click(displayNumber);
-            }
         }
         return description.getText();
     }
 
     // może zwracać null //
-    public String getEquipment() {
+    private String getEquipment() {
         if (isElementFound(equipment, 300)) {
             StringBuilder sb = new StringBuilder();
-            for (WebElement feature : equipmentList) {
+            for (WebElement feature : equipmentList)
                 sb.append(feature.getText().trim()).append(", ");
-            }
             return sb.toString().replaceAll(", $", "");
         } else {
             return null;
