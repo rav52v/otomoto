@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -15,12 +17,18 @@ public class Driver {
     public WebDriver getDriver() {
         if (driver == null) {
             System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver.exe");
+            ChromeOptions options = new ChromeOptions();
+
+
             HashMap<String, Object> images = new HashMap<>();
             images.put("images", 2);
             HashMap<String, Object> prefs = new HashMap<>();
             prefs.put("profile.managed_default_content_settings.images", 2);
-            ChromeOptions options = new ChromeOptions();
             options.setExperimentalOption("prefs", prefs);
+
+            //adblock:
+//            options.addExtensions(new File("src\\main\\resources\\adblock.crx"));
+
             options.addArguments("start-maximized");
             options.addArguments("disable-boot-animation");
             options.addArguments("--disable-2d-canvas-image-chromium");
@@ -31,12 +39,9 @@ public class Driver {
             options.addArguments("--disable-popup-blocking");
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
-            options.setHeadless(true);
+
+            options.setHeadless(false);
             options.addArguments("--disable-gpu");
-            options.addArguments("--disable-gpu-sandbox");
-            options.addArguments("--disable-gpu-program-cache");
-            options.addArguments("--disable-gpu-watchdog");
-            options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
             driver = new ChromeDriver(options);
             driver.get(new ConfigurationParser().getLinkAddress());

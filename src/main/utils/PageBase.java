@@ -14,7 +14,7 @@ public abstract class PageBase {
 
     private Driver driver;
 
-    public PageBase() {
+    protected PageBase() {
         driver = new Driver();
         PageFactory.initElements(driver.getDriver(), this);
     }

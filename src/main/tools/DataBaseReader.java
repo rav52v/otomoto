@@ -13,7 +13,7 @@ public class DataBaseReader {
 	private String conUrl;
 
 	public DataBaseReader() {
-		conUrl = "jdbc:sqlite:src//test//resources//My_Own_DataBase.db";
+		conUrl = "jdbc:sqlite:src//test//resources//otomoto.txt";
 		try {
 			con = DriverManager.getConnection(conUrl);
 			con.setAutoCommit(true);

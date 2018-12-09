@@ -16,6 +16,9 @@ public class TestSuite_1 {
         ConfigurationParser config = new ConfigurationParser();
         log.logInfo("Config created");
 
+//        DataBaseReader dataBase = new DataBaseReader();
+//        log.logInfo("Connected to database");
+
         Long start = System.currentTimeMillis();
         Driver driver = new Driver();
         log.logInfo("Opened new driver");
