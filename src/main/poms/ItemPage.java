@@ -53,7 +53,7 @@ public class ItemPage extends PageBase {
     private Map<String, String> parametersStringMap;
     private Map<String, Integer> parametersIntMap;
     private Map<String, Long> parametersLongMap;
-    private WebDriver driver;
+    private Driver driver;
     private DataBaseReader dataBase;
     private Log log;
 
@@ -105,7 +105,7 @@ public class ItemPage extends PageBase {
         parametersStringMap = new HashMap<>();
         parametersIntMap = new HashMap<>();
         parametersLongMap = new HashMap<>();
-        driver = new Driver().getDriver();
+        driver = new Driver();
         dataBase = new DataBaseReader();
         log = new Log();
     }
@@ -214,10 +214,12 @@ public class ItemPage extends PageBase {
         int i = 1;
 
         for(String x : offersMap.keySet()){
-            if(i % 10 == 0){
+            if(i % 10 == 0)
                 log.logInfo("Processing {" + i + "} from {" + offersMap.size() + " offers}...");
-            }
-            driver.get(offersMap.get(x));
+            driver.getDriver().get(offersMap.get(x));
+            //sprawdzenie, czy wyszukiwarka przeniosła nas na właściwą stronę
+            if(!driver.getDriver().getCurrentUrl().equals(offersMap.get(x)))
+                continue;
             fillParametersMap();
             dataBase.executeQuery(generateSQLQuery());
             i++;

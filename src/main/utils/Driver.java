@@ -44,7 +44,7 @@ public class Driver {
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
 
-            options.setHeadless(true);
+            options.setHeadless(false);
             options.addArguments("--disable-gpu");
 
             driver = new ChromeDriver(options);
