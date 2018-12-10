@@ -227,6 +227,8 @@ public class ItemPage extends PageBase {
             dataBase.executeQuery(generateSQLQuery());
             i++;
         }
+        log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {" +
+                (System.currentTimeMillis() - startTime)/60000 + " minutes}, which is {" + i/((System.currentTimeMillis() - startTime)/60000) + "} offers per minute");
     }
 
     private String generateSQLQuery() {

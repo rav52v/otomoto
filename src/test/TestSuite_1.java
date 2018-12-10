@@ -44,7 +44,6 @@ public class TestSuite_1 {
         itemPage.openMultipleOffersAndSendDataToDataBase();
 
 
-
         driver.afterTest(0);
         log.logInfo("Driver is closed, program has finished.");
     }
