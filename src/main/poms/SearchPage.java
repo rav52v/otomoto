@@ -54,6 +54,7 @@ public class SearchPage extends PageBase {
             if (isElementFound(nextPageBtn, 3000)){
                 click(nextPageBtn.get(0));
             }
+            //dodawanie logów
             if ((allOffers - getMappedOffersSize()) % 5 == 0){
                 double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) getMappedOffersSize()
                         / (double) allOffers))).replaceAll(",", "."));

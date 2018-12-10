@@ -21,9 +21,8 @@ public class Driver {
                     System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver");
                     break;
             }
+
             ChromeOptions options = new ChromeOptions();
-
-
             HashMap<String, Object> images = new HashMap<>();
             images.put("images", 2);
             HashMap<String, Object> prefs = new HashMap<>();
@@ -44,7 +43,7 @@ public class Driver {
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
 
-            options.setHeadless(false);
+            options.setHeadless(true);
             options.addArguments("--disable-gpu");
 
             driver = new ChromeDriver(options);
