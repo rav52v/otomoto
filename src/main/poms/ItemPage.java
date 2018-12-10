@@ -1,5 +1,5 @@
 package main.poms;
-
+// DOROBIĆ GETTER I SETTERY
 import main.tools.DataBaseReader;
 import main.utils.Driver;
 import main.utils.Log;
@@ -76,7 +76,7 @@ public class ItemPage extends PageBase {
     private WebElement price;
 
     @FindBy(css = "h1.offer-title.big-text")
-    private WebElement title;
+    private List<WebElement> title;
 
     @FindBy(css = ".offer-content__metabar > div > span:last-child > span:last-child")
     private WebElement offerId;
@@ -139,7 +139,10 @@ public class ItemPage extends PageBase {
     }
 
     private String getTitle() {
-        return this.title.getText().trim();
+        if (isElementFound(title, 500)){
+            return this.title.get(0).getText().trim();
+        }
+        return null;
     }
 
     private long getOfferId() {
@@ -226,7 +229,10 @@ public class ItemPage extends PageBase {
         if(issueDate != null){
             parametersStringMap.put("dateOfIssue", issueDate);
         }
-        parametersStringMap.put("title", getTitle());
+        String titleHeader = getTitle();
+        if(titleHeader != null){
+            parametersStringMap.put("title", titleHeader);
+        }
         parametersIntMap.put("price", getPrice());
         parametersLongMap.put("offerId", getOfferId());
         long mobileNumber = getMobile();

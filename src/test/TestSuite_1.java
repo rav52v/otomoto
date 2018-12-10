@@ -40,7 +40,6 @@ public class TestSuite_1 {
         log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis()-start)/60000
                 + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis()-start)/searchPage.getMappedOffersSize()) + "} milliseconds");
 
-        log.logInfo("Jumping between offers started");
         ItemPage itemPage = new ItemPage();
         itemPage.openMultipleOffersAndSendDataToDataBase();
 
