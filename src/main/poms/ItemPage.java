@@ -70,7 +70,7 @@ public class ItemPage extends PageBase {
     private WebElement sellerName;
 
     @FindBy(css = ".offer-content__metabar > div > span:first-child > span:last-child")
-    private WebElement dateOfIssue;
+    private List<WebElement> dateOfIssue;
 
     @FindBy(css = "div.offer-price")
     private WebElement price;
@@ -125,7 +125,10 @@ public class ItemPage extends PageBase {
     }
 
     private String getDateOfIssue() {
-        return this.dateOfIssue.getText().trim();
+        if (isElementFound(dateOfIssue, 500)){
+            return this.dateOfIssue.get(0).getText().trim();
+        }
+        return null;
     }
 
     private int getPrice() {
@@ -216,7 +219,10 @@ public class ItemPage extends PageBase {
     }
 
     private String generateSQLQuery(){
-        parametersStringMap.put("dateOfIssue", getDateOfIssue());
+        String issueDate = getDateOfIssue();
+        if(issueDate != null){
+            parametersStringMap.put("dateOfIssue", getDateOfIssue());
+        }
         parametersStringMap.put("title", getTitle());
         parametersIntMap.put("price", getPrice());
         parametersLongMap.put("offerId", getOfferId());

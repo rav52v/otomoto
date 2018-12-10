@@ -9,6 +9,7 @@ public class ConfigurationParser {
     private String linkAddress;
     private int implicitlyWaitTime;
     private String searchLinkAddress;
+    private String system;
 
     private Properties prop;
 
@@ -17,6 +18,7 @@ public class ConfigurationParser {
         this.linkAddress = getParameterValue("linkAddress");
         this.implicitlyWaitTime = Integer.parseInt(getParameterValue("implicitlyWaitTime"));
         this.searchLinkAddress = getParameterValue("searchLinkAddress");
+        this.system = getParameterValue("system");
     }
 
     public String getLinkAddress() {
@@ -29,6 +31,10 @@ public class ConfigurationParser {
 
     public String getSearchLinkAddress() {
         return this.searchLinkAddress;
+    }
+
+    public String getSystem(){
+        return this.system;
     }
 
     private String getParameterValue(String name){

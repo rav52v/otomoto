@@ -13,7 +13,14 @@ public class Driver {
 
     public WebDriver getDriver() {
         if (driver == null) {
-            System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver.exe");
+            switch(new ConfigurationParser().getSystem()){
+                case "windows":
+                    System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver.exe");
+                    break;
+                case "linux":
+                    System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver");
+                    break;
+            }
             ChromeOptions options = new ChromeOptions();
 
 
@@ -37,7 +44,7 @@ public class Driver {
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
 
-            options.setHeadless(false);
+            options.setHeadless(true);
             options.addArguments("--disable-gpu");
 
             driver = new ChromeDriver(options);
