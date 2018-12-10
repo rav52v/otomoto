@@ -61,7 +61,7 @@ public class ItemPage extends PageBase {
     private WebElement location;
 
     @FindBy(css = ".offer-header__actions span[data-path='multi_phone']")
-    private WebElement mobileBtn;
+    private List<WebElement> mobileBtn;
 
     @FindBy(css = ".offer-header__actions span.phone-number")
     private WebElement mobile;
@@ -115,9 +115,12 @@ public class ItemPage extends PageBase {
     }
 
     private long getMobile() {
-        mobileBtn.click();
-        sleeper(50);
-        return Long.parseLong(this.mobile.getText().replaceAll("[ +\\D]", ""));
+        if (isElementFound(mobileBtn, 500)){
+            mobileBtn.get(0).click();
+            sleeper(50);
+            return Long.parseLong(this.mobile.getText().replaceAll("[ +\\D]", ""));
+        }
+        return 0;
     }
 
     private String getSellerName() {
@@ -221,12 +224,15 @@ public class ItemPage extends PageBase {
     private String generateSQLQuery(){
         String issueDate = getDateOfIssue();
         if(issueDate != null){
-            parametersStringMap.put("dateOfIssue", getDateOfIssue());
+            parametersStringMap.put("dateOfIssue", issueDate);
         }
         parametersStringMap.put("title", getTitle());
         parametersIntMap.put("price", getPrice());
         parametersLongMap.put("offerId", getOfferId());
-        parametersLongMap.put("mobile", getMobile());
+        long mobileNumber = getMobile();
+        if(mobileNumber != 0){
+            parametersLongMap.put("mobile", mobileNumber);
+        }
         parametersStringMap.put("location", getLocation());
         parametersStringMap.put("sellerName", getSellerName());
         if(getEquipment() != null){
