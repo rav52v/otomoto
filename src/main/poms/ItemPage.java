@@ -1,7 +1,10 @@
 package main.poms;
 
+import main.tools.DataBaseReader;
+import main.utils.Driver;
 import main.utils.PageBase;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -46,11 +49,16 @@ public class ItemPage extends PageBase {
     }
 
     private Map<String, String> parametersMap;
+    private Map<String, String> parametersStringMap;
+    private Map<String, Integer> parametersIntMap;
+    private Map<String, Long> parametersLongMap;
+    private WebDriver driver;
+    private DataBaseReader dataBase;
 
     @FindBy(css = ".offer-content__aside .seller-box__seller-address__label")
     private WebElement location;
 
-    @FindBy(css = ".offer-content__aside .seller-phones__button")
+    @FindBy(css = ".seller-phones__button")
     private WebElement mobileBtn;
 
     @FindBy(css = ".offer-content__aside .phone-number ")
@@ -92,16 +100,20 @@ public class ItemPage extends PageBase {
 
     public ItemPage() {
         parametersMap = new HashMap<>();
-        fillParametersMap();
+        parametersStringMap = new HashMap<>();
+        parametersIntMap = new HashMap<>();
+        parametersLongMap = new HashMap<>();
+        driver = new Driver().getDriver();
+        dataBase = new DataBaseReader();
     }
 
     private String getLocation() {
         return this.location.getText().trim();
     }
 
-    private String getMobile() {
+    private int getMobile() {
         mobileBtn.click();
-        return this.mobile.getText().replaceAll("[ ]", "");
+        return Integer.parseInt(this.mobile.getText().replaceAll("[ ]", ""));
     }
 
     private String getSellerName() {
@@ -112,16 +124,16 @@ public class ItemPage extends PageBase {
         return this.dateOfIssue.getText().trim();
     }
 
-    private String getPrice() {
-        return this.price.getAttribute("data-price").replaceAll("[ ]", "");
+    private int getPrice() {
+        return Integer.parseInt(this.price.getAttribute("data-price").replaceAll("[ ]", ""));
     }
 
     private String getTitle() {
         return this.title.getText().trim();
     }
 
-    private String getOfferId() {
-        return this.offerId.getText();
+    private long getOfferId() {
+        return Long.parseLong(this.offerId.getText());
     }
 
     private String getDescription() {
@@ -134,7 +146,6 @@ public class ItemPage extends PageBase {
         return description.getText();
     }
 
-    // może zwracać null //
     private String getEquipment() {
         if (isElementFound(equipment, 300)) {
             StringBuilder sb = new StringBuilder();
@@ -156,18 +167,75 @@ public class ItemPage extends PageBase {
                 parametersMap.put(key, paramValue);
                 if (key.equals("przebieg")){
                     parametersMap.replace(key, parametersMap.get(key).replaceAll(" km| ", ""));
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
                 }
                 else if(key.equals("uszkodzony") || key.equals("anglik") || key.equals("pl") || key.equals("tuning")
                         || key.equals("aso") || key.equals("zabytek") || key.equals("bezwypadkowy")){
                     parametersMap.replace(key, "1");
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
                 }
                 else if(key.equals("moc")){
                     parametersMap.replace(key, parametersMap.get(key).replaceAll(" KM| ", ""));
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
                 }
                 else if(key.equals("pojemnosc")){
                     parametersMap.replace(key, parametersMap.get(key).replaceAll(" cm3| ", ""));
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                }
+                else if(key.equals("miejsca") || key.equals("drzwi") || key.equals("rok")){
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
                 }
             }
         }
+        parametersStringMap = parametersMap;
+    }
+
+    public void openMultipleOffersAndSendDataToDataBase(){
+        Map<String, String> offersMap = dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
+
+        for(String x : offersMap.keySet()){
+            driver.get(offersMap.get(x));
+            fillParametersMap();
+
+            System.out.println(generateSQLQuery());
+        }
+    }
+
+    private String generateSQLQuery(){
+        parametersStringMap.put("location", getLocation());
+        parametersStringMap.put("sellerName", getSellerName());
+        parametersStringMap.put("dateOfIssue", getDateOfIssue());
+        parametersStringMap.put("title", getTitle());
+        if(getDescription() != null){
+            parametersStringMap.put("description", getDescription());
+        }
+        if(getEquipment() != null){
+            parametersStringMap.put("equipment", getEquipment());
+        }
+        parametersIntMap.put("mobile", getMobile());
+        parametersIntMap.put("price", getPrice());
+        parametersLongMap.put("offerId", getOfferId());
+
+        int allMapsSize = parametersStringMap.size() + parametersIntMap.size() + parametersLongMap.size();
+        String query = "INSERT INTO otomoto (";
+        String queryFirstPart = "";
+
+        for (String key : parametersStringMap.keySet()){
+            queryFirstPart += key.concat(", ");
+        }
+        for (String key : parametersIntMap.keySet()){
+            queryFirstPart += key.concat(", ");
+        }
+        for (String key : parametersLongMap.keySet()){
+            queryFirstPart += key;
+        }
+        queryFirstPart.replaceAll("(, )$", "");
+        query += queryFirstPart + ")";
+        return query;
     }
 }

@@ -4,6 +4,7 @@ import main.poms.ItemPage;
 import main.poms.MainPage;
 import main.poms.SearchPage;
 import main.tools.ConfigurationParser;
+import main.tools.DataBaseReader;
 import main.utils.Driver;
 import main.utils.Log;
 
@@ -16,10 +17,10 @@ public class TestSuite_1 {
         ConfigurationParser config = new ConfigurationParser();
         log.logInfo("Config created");
 
-//        DataBaseReader dataBase = new DataBaseReader();
-//        log.logInfo("Connected to database");
+        DataBaseReader dataBase = new DataBaseReader();
+        log.logInfo("Connected to database");
 
-        Long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         Driver driver = new Driver();
         log.logInfo("Opened new driver");
         driver.beforeTest();
@@ -29,19 +30,18 @@ public class TestSuite_1 {
         new MainPage();
         log.logInfo("Clicked accept cookies button");
 
-
         driver.getDriver().get(config.getSearchLinkAddress());
         log.logInfo("Navigated to filtered search page {" + config.getSearchLinkAddress() + "}");
 
-        log.logInfo("Mapping offer ids started...");
         start = System.currentTimeMillis();
+        log.logInfo("Mapping offer ids started...");
         SearchPage searchPage = new SearchPage();
+        searchPage.mapAllOffers();
         log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis()-start)/60000
                 + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis()-start)/searchPage.getMappedOffersSize()) + "} milliseconds");
 
-        driver.getDriver().get("https://www.otomoto.pl/oferta/renault-captur-renault-captur-zen-tce-90-pojazd-demonstracyjny-ID6AU86r.html");
-
         ItemPage itemPage = new ItemPage();
+        itemPage.openMultipleOffersAndSendDataToDataBase();
 
 
 

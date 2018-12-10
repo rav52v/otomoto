@@ -16,9 +16,8 @@ public class SearchPage extends PageBase {
      * note that:
      * idAndLinkHolder.size() == idList.size()
      */
-
-    private Map<String, String> idAndLinkHolder;
-    private List<String> idList;
+    // <offerId, link>
+    private static Map<String, String> idAndLinkHolder;
     private Log log;
     private int allOffers;
     private int mappedOffersSize;
@@ -36,24 +35,23 @@ public class SearchPage extends PageBase {
     public SearchPage() {
         this.allOffers = getAllOffers();
         this.log = new Log();
+        if (idAndLinkHolder == null){
+            idAndLinkHolder = new HashMap<>();
+        }
         this.startTime = System.currentTimeMillis();
-        this.mapAllOffers();
     }
 
-    private void addOffersFromCurrentPageToMap(Map<String, String> map, List<String> list) {
+    private void addOffersFromCurrentPageToMap(Map<String, String> map) {
         for (WebElement offer : offersList) {
             map.put(offer.getAttribute("data-ad-id"), offer.getAttribute("data-href"));
-            list.add(offer.getAttribute("data-ad-id"));
-            mappedOffersSize = list.size();
+            mappedOffersSize = map.size();
         }
     }
 
-    private void mapAllOffers() {
+    public void mapAllOffers() {
         log.logInfo("All offers {" + String.valueOf(allOffers) + "}");
-        idAndLinkHolder = new HashMap<>();
-        idList = new ArrayList<>();
         do {
-            addOffersFromCurrentPageToMap(idAndLinkHolder, idList);
+            addOffersFromCurrentPageToMap(idAndLinkHolder);
             click(nextPageBtn.get(0));
             if ((allOffers - getMappedOffersSize()) % 5 == 0){
                 double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) getMappedOffersSize()
@@ -64,7 +62,7 @@ public class SearchPage extends PageBase {
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
         } while (isElementFound(nextPageBtn, 5000));
-        addOffersFromCurrentPageToMap(idAndLinkHolder, idList);
+        addOffersFromCurrentPageToMap(idAndLinkHolder);
     }
 
     public int getMappedOffersSize() {
@@ -73,6 +71,10 @@ public class SearchPage extends PageBase {
 
     private int getAllOffers() {
         return Integer.parseInt(offersCounter.getText().replaceAll("[)( ]", ""));
+    }
+
+    public static Map<String, String> getIdAndLinkMap(){
+        return idAndLinkHolder;
     }
 
 }

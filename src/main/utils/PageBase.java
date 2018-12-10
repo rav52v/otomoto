@@ -1,6 +1,7 @@
 package main.utils;
 
 import main.tools.ConfigurationParser;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
@@ -12,24 +13,24 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class PageBase {
 
-    private Driver driver;
+    private WebDriver driver;
 
     protected PageBase() {
-        driver = new Driver();
-        PageFactory.initElements(driver.getDriver(), this);
+        driver = new Driver().getDriver();
+        PageFactory.initElements(driver, this);
     }
 
     protected void click(WebElement element) {
-        new Actions(driver.getDriver()).moveToElement(element).click().perform();
+        new Actions(driver).moveToElement(element).click().perform();
     }
 
     protected void waitAndClick(WebElement element) {
-        new WebDriverWait(driver.getDriver(), 10, 10).until(ExpectedConditions.visibilityOf(element));
-        new Actions(driver.getDriver()).moveToElement(element).click().perform();
+        new WebDriverWait(driver, 10, 10).until(ExpectedConditions.visibilityOf(element));
+        new Actions(driver).moveToElement(element).click().perform();
     }
 
     protected void waitForElement(WebElement element) {
-        new WebDriverWait(driver.getDriver(), 10, 10).until(ExpectedConditions.visibilityOf(element));
+        new WebDriverWait(driver, 10, 10).until(ExpectedConditions.visibilityOf(element));
     }
 
     protected boolean isElementFound(List<WebElement> element, int milliSeconds) {
@@ -43,10 +44,10 @@ public abstract class PageBase {
     }
 
     private void changeImplicitlyWaitTime(int milliSeconds) {
-        driver.getDriver().manage().timeouts().implicitlyWait(milliSeconds, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(milliSeconds, TimeUnit.MILLISECONDS);
     }
 
     private void changeBackImplicitlyWaitTime() {
-        driver.getDriver().manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);
     }
 }
