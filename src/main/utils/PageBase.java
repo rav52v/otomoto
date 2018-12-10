@@ -43,6 +43,14 @@ public abstract class PageBase {
         return false;
     }
 
+    protected void sleeper(int milliseconds){
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void changeImplicitlyWaitTime(int milliSeconds) {
         driver.manage().timeouts().implicitlyWait(milliSeconds, TimeUnit.MILLISECONDS);
     }

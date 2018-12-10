@@ -5,7 +5,6 @@ import main.utils.PageBase;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,9 @@ public class SearchPage extends PageBase {
         log.logInfo("All offers {" + String.valueOf(allOffers) + "}");
         do {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
-            click(nextPageBtn.get(0));
+            if (isElementFound(nextPageBtn, 3000)){
+                click(nextPageBtn.get(0));
+            }
             if ((allOffers - getMappedOffersSize()) % 5 == 0){
                 double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) getMappedOffersSize()
                         / (double) allOffers))).replaceAll(",", "."));
@@ -61,7 +62,7 @@ public class SearchPage extends PageBase {
                 log.logInfo("Operation is done in {" + percentDone + "%}, mapped offers {" + getMappedOffersSize() +
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
-        } while (isElementFound(nextPageBtn, 5000));
+        } while (isElementFound(nextPageBtn, 4000));
         addOffersFromCurrentPageToMap(idAndLinkHolder);
     }
 

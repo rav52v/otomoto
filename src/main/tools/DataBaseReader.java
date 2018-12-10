@@ -30,14 +30,13 @@ public class DataBaseReader {
     }
 
     private boolean checkIfOfferIdExist(String offerId) {
-        String query = "SELECT offerId FROM otomoto WHERE id = ?";
+        String query = "SELECT offerId FROM otomoto WHERE offerId = ?";
         ResultSet rs;
-
         try {
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setString(1, offerId);
             rs = pstmt.executeQuery();
-            return rs.getBoolean(1);
+            return rs.next();
         } catch (SQLException e) {/*Exception Ignored*/}
         return false;
     }

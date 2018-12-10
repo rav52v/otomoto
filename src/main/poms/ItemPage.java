@@ -2,6 +2,7 @@ package main.poms;
 
 import main.tools.DataBaseReader;
 import main.utils.Driver;
+import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -54,14 +55,15 @@ public class ItemPage extends PageBase {
     private Map<String, Long> parametersLongMap;
     private WebDriver driver;
     private DataBaseReader dataBase;
+    private Log log;
 
     @FindBy(css = ".offer-content__aside .seller-box__seller-address__label")
     private WebElement location;
 
-    @FindBy(css = ".seller-phones__button")
+    @FindBy(css = ".offer-header__actions span[data-path='multi_phone']")
     private WebElement mobileBtn;
 
-    @FindBy(css = ".offer-content__aside .phone-number ")
+    @FindBy(css = ".offer-header__actions span.phone-number")
     private WebElement mobile;
 
     @FindBy(css = ".offer-content__aside .seller-box__seller-name")
@@ -105,15 +107,17 @@ public class ItemPage extends PageBase {
         parametersLongMap = new HashMap<>();
         driver = new Driver().getDriver();
         dataBase = new DataBaseReader();
+        log = new Log();
     }
 
     private String getLocation() {
         return this.location.getText().trim();
     }
 
-    private int getMobile() {
+    private long getMobile() {
         mobileBtn.click();
-        return Integer.parseInt(this.mobile.getText().replaceAll("[ ]", ""));
+        sleeper(50);
+        return Long.parseLong(this.mobile.getText().replaceAll("[ +\\D]", ""));
     }
 
     private String getSellerName() {
@@ -125,7 +129,7 @@ public class ItemPage extends PageBase {
     }
 
     private int getPrice() {
-        return Integer.parseInt(this.price.getAttribute("data-price").replaceAll("[ ]", ""));
+        return Integer.parseInt(this.price.getAttribute("data-price").replaceAll("[ ,.-]", ""));
     }
 
     private String getTitle() {
@@ -143,7 +147,7 @@ public class ItemPage extends PageBase {
             for(WebElement displayNumber : dislayNumberList)
                 click(displayNumber);
         }
-        return description.getText();
+        return description.getText().replaceAll("['\"]", "-");
     }
 
     private String getEquipment() {
@@ -157,7 +161,7 @@ public class ItemPage extends PageBase {
         }
     }
 
-    //wypełnienie mapy parametrów oraz dostosowanie danych typu int pod bazę danych
+    //wypełnienie map parametrów oraz dostosowanie danych typu int pod bazę danych
     private void fillParametersMap() {
         for (int i = 0; i < offerParameters.size(); i++) {
             String paramName = offerParameters.get(i).findElement(By.tagName("span")).getText().trim();
@@ -197,31 +201,36 @@ public class ItemPage extends PageBase {
 
     public void openMultipleOffersAndSendDataToDataBase(){
         Map<String, String> offersMap = dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
+        DataBaseReader dataBase = new DataBaseReader();
+        int i = 1;
 
         for(String x : offersMap.keySet()){
+            if(i % 10 == 0){
+                log.logInfo("Processing {" + i + "} from {" + offersMap.size() + " offers}...");
+            }
             driver.get(offersMap.get(x));
             fillParametersMap();
-
-            System.out.println(generateSQLQuery());
+            dataBase.executeQuery(generateSQLQuery());
+            i++;
         }
     }
 
     private String generateSQLQuery(){
-        parametersStringMap.put("location", getLocation());
-        parametersStringMap.put("sellerName", getSellerName());
         parametersStringMap.put("dateOfIssue", getDateOfIssue());
         parametersStringMap.put("title", getTitle());
-        if(getDescription() != null){
-            parametersStringMap.put("description", getDescription());
-        }
+        parametersIntMap.put("price", getPrice());
+        parametersLongMap.put("offerId", getOfferId());
+        parametersLongMap.put("mobile", getMobile());
+        parametersStringMap.put("location", getLocation());
+        parametersStringMap.put("sellerName", getSellerName());
         if(getEquipment() != null){
             parametersStringMap.put("equipment", getEquipment());
         }
-        parametersIntMap.put("mobile", getMobile());
-        parametersIntMap.put("price", getPrice());
-        parametersLongMap.put("offerId", getOfferId());
+        String desc = getDescription();
+        if(desc != null){
+            parametersStringMap.put("description", desc);
+        }
 
-        int allMapsSize = parametersStringMap.size() + parametersIntMap.size() + parametersLongMap.size();
         String query = "INSERT INTO otomoto (";
         String queryFirstPart = "";
 
@@ -232,10 +241,24 @@ public class ItemPage extends PageBase {
             queryFirstPart += key.concat(", ");
         }
         for (String key : parametersLongMap.keySet()){
-            queryFirstPart += key;
+            queryFirstPart += key.concat(", ");
         }
-        queryFirstPart.replaceAll("(, )$", "");
-        query += queryFirstPart + ")";
+
+        query += queryFirstPart.replaceAll("(, )$", "") + ") values (";
+        String querySecondPart = "";
+
+        for (String key : parametersStringMap.keySet()){
+            querySecondPart += "'".concat(parametersStringMap.get(key)).concat("', ");
+        }
+        for (String key : parametersIntMap.keySet()){
+            querySecondPart += parametersIntMap.get(key) + ", ";
+        }
+        for (String key : parametersLongMap.keySet()) {
+            querySecondPart += parametersLongMap.get(key) + ", ";
+        }
+        
+        query += querySecondPart.replaceAll("(, )$", "") + ")";
+
         return query;
     }
 }

@@ -21,8 +21,8 @@ public class TestSuite_1 {
         log.logInfo("Connected to database");
 
         long start = System.currentTimeMillis();
+        log.logInfo("Opening new driver...");
         Driver driver = new Driver();
-        log.logInfo("Opened new driver");
         driver.beforeTest();
         log.logInfo("Driver created, starts with {" + config.getLinkAddress() + "}");
         log.logInfo("Driver opened, and loaded in {" + (System.currentTimeMillis()-start) + " milliseconds}");
@@ -40,18 +40,9 @@ public class TestSuite_1 {
         log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis()-start)/60000
                 + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis()-start)/searchPage.getMappedOffersSize()) + "} milliseconds");
 
+        log.logInfo("Jumping between offers started");
         ItemPage itemPage = new ItemPage();
         itemPage.openMultipleOffersAndSendDataToDataBase();
-
-
-
-
-
-
-
-
-
-
 
 
 
