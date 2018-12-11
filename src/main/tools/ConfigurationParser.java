@@ -47,13 +47,9 @@ public class ConfigurationParser {
         prop = new Properties();
         String path = new File("").toPath().toAbsolutePath().toString();
         try {
-            inputStream = new FileInputStream(path + "\\config.properties");
+            inputStream = new FileInputStream(path + "/config.properties");
         } catch (FileNotFoundException e) {
-            try {
-                inputStream = new FileInputStream(path + "/config.properties");
-            } catch (FileNotFoundException e1) {
-                e1.printStackTrace();
-            }
+            e.printStackTrace();
         }
         try {
             prop.load(inputStream);

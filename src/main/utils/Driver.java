@@ -17,10 +17,10 @@ public class Driver {
         if (driver == null) {
             switch(new ConfigurationParser().getSystem()){
                 case "windows":
-                    System.setProperty("webdriver.chrome.driver", path + "\\chromedriver.exe");
+                    System.setProperty("webdriver.chrome.driver", path + "/chromedriver.exe");
                     break;
                 case "linux":
-                    System.setProperty("webdriver.chrome.driver", path + "\\chromedriver");
+                    System.setProperty("webdriver.chrome.driver", path + "/chromedriver");
                     break;
             }
 
