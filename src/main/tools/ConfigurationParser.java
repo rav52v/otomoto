@@ -49,7 +49,11 @@ public class ConfigurationParser {
         try {
             inputStream = new FileInputStream(path + "\\config.properties");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            try {
+                inputStream = new FileInputStream(path + "/config.properties");
+            } catch (FileNotFoundException e1) {
+                e1.printStackTrace();
+            }
         }
         try {
             prop.load(inputStream);
