@@ -1,15 +1,16 @@
-package main.tools;
+package main.tools; //place this file in same dir as runnable jar / project dir
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class ConfigurationParser {
+    private InputStream inputStream;
     private String propertiesFileName;
     private String linkAddress;
     private int implicitlyWaitTime;
     private String searchLinkAddress;
     private String system;
+    private String headless;
 
     private Properties prop;
 
@@ -19,6 +20,7 @@ public class ConfigurationParser {
         this.implicitlyWaitTime = Integer.parseInt(getParameterValue("implicitlyWaitTime"));
         this.searchLinkAddress = getParameterValue("searchLinkAddress");
         this.system = getParameterValue("system");
+        this.headless = getParameterValue("headless");
     }
 
     public String getLinkAddress() {
@@ -37,9 +39,18 @@ public class ConfigurationParser {
         return this.system;
     }
 
+    public String getHeadless(){
+        return this.headless;
+    }
+
     private String getParameterValue(String name){
         prop = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
+        String path = new File("").toPath().toAbsolutePath().toString();
+        try {
+            inputStream = new FileInputStream(path + "\\config.properties");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         try {
             prop.load(inputStream);
         } catch (IOException e) {

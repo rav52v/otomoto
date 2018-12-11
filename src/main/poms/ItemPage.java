@@ -5,7 +5,6 @@ import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -69,7 +68,7 @@ public class ItemPage extends PageBase {
     private String equipment;
     private String description;
 
-    @FindBy(css = ".offer-content__aside .seller-box__seller-address__label")
+    @FindBy(css = ".seller-box__seller-address > span:last-child")
     private WebElement locationField;
 
     @FindBy(css = ".offer-header__actions span[data-path='multi_phone']")
@@ -139,8 +138,13 @@ public class ItemPage extends PageBase {
 
         if (isElementFound(mobileBtnField, 500)) {
             mobileBtnField.get(0).click();
-            sleeper(50);
-            this.mobile = Long.parseLong(mobileField.getText().replaceAll("[ +\\D]", ""));
+            // sprawdzanie, czy zdążył pobrać cały numer
+            if (mobileField.getText().length() < 5){
+                sleeper(800);
+            }
+            else{
+                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[ ]", "").replaceAll("[+]", "00"));
+            }
         } else
             this.mobile = 0;
 
@@ -165,6 +169,7 @@ public class ItemPage extends PageBase {
         this.location = locationField.getText().trim();
 
         this.sellerName = sellerNameField.getText().trim();
+
     }
 
     //wypełnienie map parametrów oraz dostosowanie danych typu int pod bazę danych
@@ -221,8 +226,10 @@ public class ItemPage extends PageBase {
 
             driver.getDriver().get(offersMap.get(x));
             //sprawdzenie, czy wyszukiwarka przeniosła nas na właściwą stronę
-            if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x)))
+            if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))){
+                log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site)");
                 continue;
+            }
             fillParametersMap();
             dataBase.executeQuery(generateSQLQuery());
             i++;

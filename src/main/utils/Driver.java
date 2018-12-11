@@ -5,20 +5,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Driver {
     private static WebDriver driver;
+    private String path = new File("").toPath().toAbsolutePath().toString();
 
     public WebDriver getDriver() {
         if (driver == null) {
             switch(new ConfigurationParser().getSystem()){
                 case "windows":
-                    System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver.exe");
+                    System.setProperty("webdriver.chrome.driver", path + "\\chromedriver.exe");
                     break;
                 case "linux":
-                    System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver");
+                    System.setProperty("webdriver.chrome.driver", path + "\\chromedriver");
                     break;
             }
 
@@ -42,9 +44,12 @@ public class Driver {
             options.addArguments("--disable-popup-blocking");
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
-
-            options.setHeadless(true);
+            boolean headless = Boolean.parseBoolean(new ConfigurationParser().getHeadless());
+            options.setHeadless(headless);
             options.addArguments("--disable-gpu");
+            if(headless){
+                options.addArguments("--window-size=1280,1024");
+            }
 
             driver = new ChromeDriver(options);
             driver.get(new ConfigurationParser().getLinkAddress());
