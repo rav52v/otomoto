@@ -1,6 +1,7 @@
 package main.utils;
 
 import main.tools.ConfigurationParser;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -50,6 +51,7 @@ public class Driver {
             if(headless){
                 options.addArguments("--window-size=1280,1024");
             }
+            options.setPageLoadStrategy(PageLoadStrategy.NONE);
 
             driver = new ChromeDriver(options);
             driver.get(new ConfigurationParser().getLinkAddress());

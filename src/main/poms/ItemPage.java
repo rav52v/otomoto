@@ -230,6 +230,7 @@ public class ItemPage extends PageBase {
             }
 
             driver.getDriver().get(offersMap.get(x));
+            sleeper(500);
             //sprawdzenie, czy wyszukiwarka przeniosła nas na właściwą stronę
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                 log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site)");

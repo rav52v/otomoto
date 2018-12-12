@@ -53,6 +53,7 @@ public class SearchPage extends PageBase {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
             if (isElementFound(nextPageBtn, 3000)){
                 click(nextPageBtn.get(0));
+                sleeper(500);
             }
             //dodawanie logów
             if ((allOffers - getMappedOffersSize()) % 5 == 0){
