@@ -51,7 +51,6 @@ public class Driver {
             if(headless){
                 options.addArguments("--window-size=1280,1024");
             }
-            options.setPageLoadStrategy(PageLoadStrategy.NONE);
 
             driver = new ChromeDriver(options);
             driver.get(new ConfigurationParser().getLinkAddress());
