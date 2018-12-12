@@ -44,7 +44,7 @@ public class Driver {
             options.addArguments("--disable-popup-blocking");
             options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
-            boolean headless = Boolean.parseBoolean(new ConfigurationParser().getHeadless());
+            boolean headless = new ConfigurationParser().getHeadless();
             options.setHeadless(headless);
             options.addArguments("--disable-gpu");
             if(headless){

@@ -47,15 +47,17 @@ public class Email {
     }
 
     public void sendEmail(String subject, String value) {
-        try {
-            message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to));
-            message.setSubject(subject);
-            message.setText(value);
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+        if (new ConfigurationParser().getSendReport()){
+            try {
+                message.setFrom(new InternetAddress(from));
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse(to));
+                message.setSubject(subject);
+                message.setText(value);
+                Transport.send(message);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

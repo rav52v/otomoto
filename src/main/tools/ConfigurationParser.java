@@ -18,6 +18,7 @@ public class ConfigurationParser {
     private String senderEmail;
     private String login;
     private String password;
+    private String sendReport;
 
     public ConfigurationParser() {
         this.propertiesFileName = "config.properties";
@@ -44,6 +45,7 @@ public class ConfigurationParser {
         this.senderEmail = getParameterValue("senderEmail");
         this.login = getParameterValue("login");
         this.password = getParameterValue("password");
+        this.sendReport = getParameterValue("sendReport");
 
     }
 
@@ -63,8 +65,8 @@ public class ConfigurationParser {
         return this.system;
     }
 
-    public String getHeadless(){
-        return this.headless;
+    public boolean getHeadless(){
+        return Boolean.parseBoolean(this.headless);
     }
 
     private String getParameterValue(String name){
@@ -85,5 +87,9 @@ public class ConfigurationParser {
 
     public String getPassword() {
         return this.password;
+    }
+
+    public boolean getSendReport(){
+        return Boolean.parseBoolean(this.sendReport);
     }
 }
