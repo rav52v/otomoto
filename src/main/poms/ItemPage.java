@@ -139,10 +139,9 @@ public class ItemPage extends PageBase {
         if (isElementFound(mobileBtnField, 500)) {
             mobileBtnField.get(0).click();
             // sprawdzanie, czy zdążył pobrać cały numer
-            if (mobileField.getText().length() < 5){
+            if (mobileField.getText().length() < 5) {
                 sleeper(800);
-            }
-            else{
+            } else {
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[ ]", "").replaceAll("[+]", "00"));
             }
         } else
@@ -163,8 +162,13 @@ public class ItemPage extends PageBase {
                     click(displayNumber);
             }
             this.description = descriptionField.getText().replaceAll("['\"]", "-");
-        } else
-            this.description = null;
+        } else {
+            if (isElementFound(dislayNumberListField, 0)) {
+                for (WebElement displayNumber : dislayNumberListField)
+                    click(displayNumber);
+            }
+            this.description = descriptionField.getText().replaceAll("['\"]", "-");
+        }
 
         this.location = locationField.getText().trim();
 
@@ -210,23 +214,24 @@ public class ItemPage extends PageBase {
         Map<String, String> offersMap = dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
         DataBaseReader dataBase = new DataBaseReader();
         int i = 1;
+        log.logInfo("Switching pages started...");
         long startTime = System.currentTimeMillis();
 
         for (String x : offersMap.keySet()) {
-            if (i % 10 == 0){
+            if (i % 10 == 0) {
                 //dodawanie logów
                 double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) i
                         / (double) offersMap.size()))).replaceAll(",", "."));
                 double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
                 double timeLeftInMinutes = (100.0 / percentDone) * (passedTimeInMinutes) - passedTimeInMinutes + 1.0;
 
-                log.logInfo("Operation is done in {" + percentDone +"%}, processing offer {" + i + "/" + offersMap.size() +
+                log.logInfo("Operation is done in {" + percentDone + "%}, processing offer {" + i + "/" + offersMap.size() +
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
 
             driver.getDriver().get(offersMap.get(x));
             //sprawdzenie, czy wyszukiwarka przeniosła nas na właściwą stronę
-            if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))){
+            if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                 log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site)");
                 continue;
             }
@@ -234,8 +239,15 @@ public class ItemPage extends PageBase {
             dataBase.executeQuery(generateSQLQuery());
             i++;
         }
-        log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {" +
-                (System.currentTimeMillis() - startTime)/60000 + " minutes}, which is {" + i/((System.currentTimeMillis() - startTime)/60000) + "} offers per minute");
+        // / by zero Exception
+        if (i > 5) {
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + (i - 1) + "}, operation took {" +
+                    (System.currentTimeMillis() - startTime) / 60000 + " minutes}, which is {" + (i - 1) / ((System.currentTimeMillis() - startTime) / 60000) + "} offers per minute");
+        } else if (offersMap.size() == 0) {
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {0}");
+        } else {
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + (i - 1) + "}");
+        }
     }
 
     private String generateSQLQuery() {
