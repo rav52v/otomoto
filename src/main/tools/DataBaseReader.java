@@ -42,7 +42,7 @@ public class DataBaseReader {
     }
 
     public Map<String, String> cleanMapFromExistingRecords(Map<String, String> mapToClean) {
-        log.logInfo("Map filtering from existing records...");
+        log.logInfo("Removing from memory existing records...");
         Map<String, String> cleanedMap = new HashMap<>();
         long start = System.currentTimeMillis();
         for (String x : mapToClean.keySet()){
@@ -51,7 +51,7 @@ public class DataBaseReader {
             }
         }
         log.logInfo("Database already contains {" + (mapToClean.size() - cleanedMap.size()) + "}, map with offers now contains {"
-                + cleanedMap.size() + "}, operations took {" + (System.currentTimeMillis() - start)/1000 + " seconds}");
+                + cleanedMap.size() + "}, operation took {" + (System.currentTimeMillis() - start)/1000 + " seconds}");
             return cleanedMap;
     }
 
