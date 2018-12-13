@@ -27,8 +27,8 @@ public class Email {
         config = new ConfigurationParser();
         to = config.getReceiverEmail();
         from = config.getSenderEmail();
-        username = config.getLogin();
-        password = config.getPassword();
+        username = config.getEmailLogin();
+        password = config.getEmailPassword();
         host = "smtp.gmail.com";
 
         props = new Properties();
@@ -47,17 +47,17 @@ public class Email {
     }
 
     public void sendEmail(String subject, String value) {
-        if (new ConfigurationParser().getSendReport()){
-            try {
-                message.setFrom(new InternetAddress(from));
-                message.setRecipients(Message.RecipientType.TO,
-                        InternetAddress.parse(to));
-                message.setSubject(subject);
-                message.setText(value);
-                Transport.send(message);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
+
+        try {
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(to));
+            message.setSubject(subject);
+            message.setText(value);
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
+
     }
 }

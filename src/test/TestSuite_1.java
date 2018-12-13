@@ -51,7 +51,9 @@ public class TestSuite_1 {
         log.logInfo("Driver is closed, program has finished.");
         log.logInfo("Total program working time was {" + (System.currentTimeMillis() - programTime) / 60000 + " minutes}.");
 
-        new Email().sendEmail("Automatically generated otomoto report {" + log.getActualTime() + "}", log.getLog());
-        log.logInfo("An email with a report has been sent to {" + config.getReceiverEmail() + "}.");
+        if (config.getSendReport()){
+            new Email().sendEmail("Automatically generated otomoto report {" + log.getActualTime() + "}", log.getLog());
+            log.logInfo("An email with a report has been sent to {" + config.getReceiverEmail() + "}.");
+        }
     }
 }

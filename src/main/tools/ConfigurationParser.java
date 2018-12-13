@@ -16,9 +16,13 @@ public class ConfigurationParser {
 
     private String receiverEmail;
     private String senderEmail;
-    private String login;
-    private String password;
+    private String emailLogin;
+    private String emailPassword;
     private String sendReport;
+
+    private String conUrl;
+    private String sqlLogin;
+    private String sqlPassword;
 
     public ConfigurationParser() {
         this.propertiesFileName = "config.properties";
@@ -43,9 +47,13 @@ public class ConfigurationParser {
 
         this.receiverEmail = getParameterValue("receiverEmail");
         this.senderEmail = getParameterValue("senderEmail");
-        this.login = getParameterValue("login");
-        this.password = getParameterValue("password");
+        this.emailLogin = getParameterValue("emailLogin");
+        this.emailPassword = getParameterValue("emailPassword");
         this.sendReport = getParameterValue("sendReport");
+
+        this.conUrl = getParameterValue("conUrl");
+        this.sqlLogin = getParameterValue("sqlLogin");
+        this.sqlPassword = getParameterValue("sqlPassword");
 
     }
 
@@ -81,15 +89,27 @@ public class ConfigurationParser {
         return this.senderEmail;
     }
 
-    public String getLogin() {
-        return this.login;
+    public String getEmailLogin() {
+        return this.emailLogin;
     }
 
-    public String getPassword() {
-        return this.password;
+    public String getEmailPassword() {
+        return this.emailPassword;
     }
 
     public boolean getSendReport(){
         return Boolean.parseBoolean(this.sendReport);
+    }
+
+    public String getConUrl() {
+        return this.conUrl;
+    }
+
+    public String getSqlLogin() {
+        return this.sqlLogin;
+    }
+
+    public String getSqlPassword() {
+        return this.sqlPassword;
     }
 }

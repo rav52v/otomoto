@@ -2,7 +2,7 @@
 location -string
 mobile -int
 sellerName -string
-dateOfIssue -string
+dateOfIssue -date
 
 --------------------inne
 Wyposa¿enie, equipment -string(text)
@@ -12,7 +12,7 @@ Tytu³ og³oszenia, title -string
 ID, offerId -long
 
 --------------------parametry oferty
-Oferta od, ofertaOd -string
+Oferta od, ofertaOd -int
 Kategoria, kategoria -string
 Marka pojazdu, marka -string
 Model pojazdu, model -string
@@ -21,22 +21,114 @@ Rok produkcji, rok -int
 Przebieg, przebieg -int
 Pojemnoœæ skokowa, pojemnosc -int
 VIN, vin -string
-Rodzaj paliwa, paliwo -string
+Rodzaj paliwa, paliwo -int
 Moc, moc -int
-Skrzynia biegów, skrzynia -string
+Skrzynia biegów, skrzynia -int
 Uszkodzony, uszkodzony -int
-Napêd, naped -string
-Typ, typ -string
+Napêd, naped -int
+Typ, typ -int
 Liczba drzwi, drzwi -int
 Liczba miejsc, miejsca -int
 Kierownica po prawej (Anglik), anglik -int
-Kolor, kolor -string
-Pierwsza rejestracja, pierwszaRejestracja -string
-Kraj pochodzenia, krajPochodzenia -string
+Kolor, kolor -int
+Pierwsza rejestracja, pierwszaRejestracja -date
+Kraj pochodzenia, krajPochodzenia -int
 Numer rejestracyjny pojazdu, numerRej -string
 Zarejestrowany w Polsce, pl -int
 Tuning, tuning -int
 Serwisowany w ASO, aso -int
 Zarejestrowany jako zabytek, zabytek -int
 Bezwypadkowy, bezwypadkowy -int
-Stan, stan -string
+Stan, stan -int
+
+
+    legenda:
+ofertaOd "Osoby prywatnej" = 1
+ofertaOd "Firmy" = 0
+
+paliwo "Benzyna" = 0
+paliwo "Diesel" = 1
+paliwo "Benzyna+LPG" = 2
+paliwo "Benzyna+CNG" = 3
+paliwo "Elektryczny" = 4
+paliwo "Etanol" = 5
+paliwo "Hybryda" = 6
+paliwo "Wodór" = 7
+
+skrzynia "Manualna" = 0
+skrzynia "Automatyczna hydrauliczna (klasyczna)" = 1
+skrzynia "Automatyczna bezstopniowa (CVT)" = 2
+skrzynia "Automatyczna dwusprzêg³owa (DCT, DSG)" = 3
+skrzynia "Pó³automatyczna (ASG, Tiptronic)" = 4
+
+naped "Na przednie ko³a" = 0
+naped "Na tylne ko³a" = 1
+naped "4x4 (do³¹czany automatycznie)" = 2
+naped "4x4 (do³¹czany rêcznie)" = 3
+naped "4x4 (sta³y)" = 4
+
+typ "Auta ma³e" = 0
+typ "Auta miejskie" = 1
+typ "Kompakt" = 2
+typ "Sedan" = 3
+typ "Kombi" = 4
+typ "Minivan" = 5
+typ "SUV" = 6
+typ "Kabriolet" = 7
+typ "Coupe" = 8
+
+stan "U¿ywane" = 0
+stan "Nowe" = 1
+
+kolor "Be¿owy" = 0
+kolor "Bia³y" = 1
+kolor "Bordowy" = 2
+kolor "Br¹zowy" = 3
+kolor "Czarny" = 4
+kolor "Czerwony" = 5
+kolor "Fioletowy" = 6
+kolor "Niebieski" = 7
+kolor "Srebrny" = 8
+kolor "Szary" = 9
+kolor "Zielony" = 10
+kolor "Z³oty" = 11
+kolor "¯ó³ty" = 12
+kolor "Inny kolor" = 13
+
+krajPochodzenia "Austria" = 0
+krajPochodzenia "Belgia" = 1
+krajPochodzenia "Bia³oruœ" = 2
+krajPochodzenia "Bu³garia" = 3
+krajPochodzenia "Chorwacja" = 4
+krajPochodzenia "Czechy" = 5
+krajPochodzenia "Dania" = 6
+krajPochodzenia "Estonia" = 7
+krajPochodzenia "Finlandia" = 8
+krajPochodzenia "Francja" = 9
+krajPochodzenia "Grecja" = 10
+krajPochodzenia "Hiszpania" = 11
+krajPochodzenia "Holandia" = 12
+krajPochodzenia "Irlandia" = 13
+krajPochodzenia "Islandia" = 14
+krajPochodzenia "Kanada" = 15
+krajPochodzenia "Liechtenstein" = 16
+krajPochodzenia "Litwa" = 17
+krajPochodzenia "Luksemburg" = 18
+krajPochodzenia "£otwa" = 19
+krajPochodzenia "Monako" = 20
+krajPochodzenia "Niemcy" = 21
+krajPochodzenia "Norwegia" = 22
+krajPochodzenia "Polska" = 23
+krajPochodzenia "Rosja" = 24
+krajPochodzenia "Rumunia" = 25
+krajPochodzenia "S³owacja" = 26
+krajPochodzenia "S³owenia" = 27
+krajPochodzenia "Stany Zjednoczone" = 28
+krajPochodzenia "Szwajcaria" = 29
+krajPochodzenia "Szwecja" = 30
+krajPochodzenia "Turcja" = 31
+krajPochodzenia "Ukraina" = 32
+krajPochodzenia "Wêgry" = 33
+krajPochodzenia "Wielka Brytania" = 34
+krajPochodzenia "W³ochy" = 35
+krajPochodzenia "Inny" = 36

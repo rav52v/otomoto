@@ -14,11 +14,13 @@ public class DataBaseReader {
     private String pass;
     private String login;
     private Log log;
+    private ConfigurationParser config;
 
     public DataBaseReader() {
-        conUrl = "jdbc:mysql://185.28.102.242/otomoto5?useUnicode=true&characterEncoding=utf8";
-        login = "otomoto9";
-        pass = "9rmvqx5nympfviy";
+        config = new ConfigurationParser();
+        conUrl = config.getConUrl();
+        login = config.getSqlLogin();
+        pass = config.getSqlPassword();
         log = new Log();
 
         try {

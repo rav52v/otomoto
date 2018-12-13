@@ -1,5 +1,6 @@
 package main.poms;
 
+import main.tools.Converters;
 import main.tools.DataBaseReader;
 import main.utils.Driver;
 import main.utils.Log;
@@ -57,6 +58,7 @@ public class ItemPage extends PageBase {
     private Driver driver;
     private DataBaseReader dataBase;
     private Log log;
+    private Converters converter;
 
     private String location;
     private String dateOfIssue;
@@ -112,6 +114,7 @@ public class ItemPage extends PageBase {
 
 
     public ItemPage() {
+        converter = new Converters();
         parametersMap = new HashMap<>();
         parametersStringMap = new HashMap<>();
         parametersIntMap = new HashMap<>();
@@ -123,7 +126,7 @@ public class ItemPage extends PageBase {
 
     private void setFeatures() {
         if (isElementFound(dateOfIssueField, 500))
-            this.dateOfIssue = dateOfIssueField.get(0).getText().trim();
+            this.dateOfIssue = converter.getDateFromDateOfIssue(dateOfIssueField.get(0).getText().trim());
         else
             this.dateOfIssue = null;
 
@@ -140,9 +143,9 @@ public class ItemPage extends PageBase {
             mobileBtnField.get(0).click();
             // sprawdzanie, czy zdążył pobrać cały numer
             if (mobileField.getText().length() < 5) {
-                sleeper(800);
+                sleeper(500);
             } else {
-                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[ ]", "").replaceAll("[+]", "00"));
+                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
             }
         } else
             this.mobile = 0;
@@ -188,6 +191,8 @@ public class ItemPage extends PageBase {
                     parametersMap.replace(key, parametersMap.get(key).replaceAll(" km| ", ""));
                     parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
                     parametersMap.remove(key);
+                } else if (key.equals("pierwszaRejestracja")) {
+                    parametersMap.replace(key, converter.getDateFromPierwszaRejestracja(parametersMap.get(key)));
                 } else if (key.equals("uszkodzony") || key.equals("anglik") || key.equals("pl") || key.equals("tuning")
                         || key.equals("aso") || key.equals("zabytek") || key.equals("bezwypadkowy")) {
                     parametersMap.replace(key, "1");
@@ -204,6 +209,289 @@ public class ItemPage extends PageBase {
                 } else if (key.equals("miejsca") || key.equals("drzwi") || key.equals("rok")) {
                     parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
                     parametersMap.remove(key);
+                } else if (key.equals("ofertaOd")) {
+                    if (parametersMap.get(key).equals("Osoby prywatnej")) {
+                        parametersMap.replace(key, "1");
+                    } else if (parametersMap.get(key).equals("Firmy")) {
+                        parametersMap.replace(key, "0");
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("paliwo")) {
+                    switch (parametersMap.get(key)) {
+                        case "Benzyna":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Diesel":
+                            parametersMap.replace(key, "1");
+                            break;
+                        case "Benzyna+LPG":
+                            parametersMap.replace(key, "2");
+                            break;
+                        case "Benzyna+CNG":
+                            parametersMap.replace(key, "3");
+                            break;
+                        case "Elektryczny":
+                            parametersMap.replace(key, "4");
+                            break;
+                        case "Etanol":
+                            parametersMap.replace(key, "5");
+                            break;
+                        case "Hybryda":
+                            parametersMap.replace(key, "6");
+                            break;
+                        case "Wodór":
+                            parametersMap.replace(key, "7");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("skrzynia")) {
+                    switch (parametersMap.get(key)) {
+                        case "Manualna":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Automatyczna hydrauliczna (klasyczna)":
+                            parametersMap.replace(key, "1");
+                            break;
+                        case "Automatyczna bezstopniowa (CVT)":
+                            parametersMap.replace(key, "2");
+                            break;
+                        case "Automatyczna dwusprzęgłowa (DCT, DSG)":
+                            parametersMap.replace(key, "3");
+                            break;
+                        case "Półautomatyczna (ASG, Tiptronic)":
+                            parametersMap.replace(key, "4");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("naped")) {
+                    switch (parametersMap.get(key)) {
+                        case "Na przednie koła":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Na tylne koła":
+                            parametersMap.replace(key, "1");
+                            break;
+                        case "4x4 (dołączany automatycznie)":
+                            parametersMap.replace(key, "2");
+                            break;
+                        case "4x4 (dołączany ręcznie)":
+                            parametersMap.replace(key, "3");
+                            break;
+                        case "4x4 (stały)":
+                            parametersMap.replace(key, "4");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("typ")) {
+                    switch (parametersMap.get(key)) {
+                        case "Auta małe":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Auta miejskie":
+                            parametersMap.replace(key, "1");
+                            break;
+                        case "Kompakt":
+                            parametersMap.replace(key, "2");
+                            break;
+                        case "Sedan":
+                            parametersMap.replace(key, "3");
+                            break;
+                        case "Kombi":
+                            parametersMap.replace(key, "4");
+                            break;
+                        case "Minivan":
+                            parametersMap.replace(key, "5");
+                            break;
+                        case "SUV":
+                            parametersMap.replace(key, "6");
+                            break;
+                        case "Kabriolet":
+                            parametersMap.replace(key, "7");
+                            break;
+                        case "Coupe":
+                            parametersMap.replace(key, "8");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("stan")) {
+                    switch (parametersMap.get(key)) {
+                        case "Używane":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Nowe":
+                            parametersMap.replace(key, "1");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("kolor")) {
+                    switch (parametersMap.get(key)) {
+                        case "Beżowy":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Biały":
+                            parametersMap.replace(key, "1");
+                            break;
+                        case "Bordowy":
+                            parametersMap.replace(key, "2");
+                            break;
+                        case "Brązowy":
+                            parametersMap.replace(key, "3");
+                            break;
+                        case "Czarny":
+                            parametersMap.replace(key, "4");
+                            break;
+                        case "Czerwony":
+                            parametersMap.replace(key, "5");
+                            break;
+                        case "Fioletowy":
+                            parametersMap.replace(key, "6");
+                            break;
+                        case "Niebieski":
+                            parametersMap.replace(key, "7");
+                            break;
+                        case "Srebrny":
+                            parametersMap.replace(key, "8");
+                            break;
+                        case "Szary":
+                            parametersMap.replace(key, "9");
+                            break;
+                        case "Zielony":
+                            parametersMap.replace(key, "10");
+                            break;
+                        case "Złoty":
+                            parametersMap.replace(key, "11");
+                            break;
+                        case "Żółty":
+                            parametersMap.replace(key, "12");
+                            break;
+                        case "Inny kolor":
+                            parametersMap.replace(key, "13");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
+                } else if (key.equals("krajPochodzenia")) {
+                    switch (parametersMap.get(key)) {
+                        case "Austria":
+                            parametersMap.replace(key, "0");
+                            break;
+                        case "Belgia":
+                            parametersMap.replace(key, "1");
+                            break;
+                        case "Białoruś":
+                            parametersMap.replace(key, "2");
+                            break;
+                        case "Bułgaria":
+                            parametersMap.replace(key, "3");
+                            break;
+                        case "Chorwacja":
+                            parametersMap.replace(key, "4");
+                            break;
+                        case "Czechy":
+                            parametersMap.replace(key, "5");
+                            break;
+                        case "Dania":
+                            parametersMap.replace(key, "6");
+                            break;
+                        case "Estonia":
+                            parametersMap.replace(key, "7");
+                            break;
+                        case "Finlandia":
+                            parametersMap.replace(key, "8");
+                            break;
+                        case "Francja":
+                            parametersMap.replace(key, "9");
+                            break;
+                        case "Grecja":
+                            parametersMap.replace(key, "10");
+                            break;
+                        case "Holandia":
+                            parametersMap.replace(key, "11");
+                            break;
+                        case "Hiszpania":
+                            parametersMap.replace(key, "12");
+                            break;
+                        case "Irlandia":
+                            parametersMap.replace(key, "13");
+                            break;
+                        case "Islandia":
+                            parametersMap.replace(key, "14");
+                            break;
+                        case "Kanada":
+                            parametersMap.replace(key, "15");
+                            break;
+                        case "Liechtenstein":
+                            parametersMap.replace(key, "16");
+                            break;
+                        case "Litwa":
+                            parametersMap.replace(key, "17");
+                            break;
+                        case "Luksemburg":
+                            parametersMap.replace(key, "18");
+                            break;
+                        case "Łotwa":
+                            parametersMap.replace(key, "19");
+                            break;
+                        case "Monako":
+                            parametersMap.replace(key, "20");
+                            break;
+                        case "Niemcy":
+                            parametersMap.replace(key, "21");
+                            break;
+                        case "Norwegia":
+                            parametersMap.replace(key, "22");
+                            break;
+                        case "Polska":
+                            parametersMap.replace(key, "23");
+                            break;
+                        case "Rosja":
+                            parametersMap.replace(key, "24");
+                            break;
+                        case "Rumunia":
+                            parametersMap.replace(key, "25");
+                            break;
+                        case "Słowacja":
+                            parametersMap.replace(key, "26");
+                            break;
+                        case "Słowenia":
+                            parametersMap.replace(key, "27");
+                            break;
+                        case "Stany Zjednoczone":
+                            parametersMap.replace(key, "28");
+                            break;
+                        case "Szwajcaria":
+                            parametersMap.replace(key, "29");
+                            break;
+                        case "Szwecja":
+                            parametersMap.replace(key, "30");
+                            break;
+                        case "Turcja":
+                            parametersMap.replace(key, "31");
+                            break;
+                        case "Ukraina":
+                            parametersMap.replace(key, "32");
+                            break;
+                        case "Węgry":
+                            parametersMap.replace(key, "33");
+                            break;
+                        case "Wielka Brytania":
+                            parametersMap.replace(key, "34");
+                            break;
+                        case "Włochy":
+                            parametersMap.replace(key, "35");
+                            break;
+                        case "Inny":
+                            parametersMap.replace(key, "36");
+                            break;
+                    }
+                    parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
+                    parametersMap.remove(key);
                 }
             }
         }
@@ -212,7 +500,6 @@ public class ItemPage extends PageBase {
 
     public void openMultipleOffersAndSendDataToDataBase() {
         Map<String, String> offersMap = dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
-        DataBaseReader dataBase = new DataBaseReader();
         int i = 1;
         log.logInfo("Switching pages started...");
         long startTime = System.currentTimeMillis();
@@ -239,14 +526,16 @@ public class ItemPage extends PageBase {
             dataBase.executeQuery(generateSQLQuery());
             i++;
         }
+        i--;
+        long operationTime = System.currentTimeMillis() - startTime;
         // / by zero Exception
-        if (i > 5) {
-            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + (i - 1) + "}, operation took {" +
-                    (System.currentTimeMillis() - startTime) / 60000 + " minutes}, which is {" + (i - 1) / ((System.currentTimeMillis() - startTime) / 60000) + "} offers per minute");
+        if (operationTime > 65000) {
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {" +
+                    (operationTime / 60000) + " minutes}, which is {" + i / (operationTime / 60000) + "} offers per minute");
         } else if (offersMap.size() == 0) {
             log.logInfo("Operation is done in {100.00%}, proceeded offers {0}");
         } else {
-            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + (i - 1) + "}");
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {less then minute)");
         }
     }
 
