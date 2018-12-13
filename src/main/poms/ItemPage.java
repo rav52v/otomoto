@@ -516,6 +516,8 @@ public class ItemPage extends PageBase {
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
 
+            System.out.println(offersMap.get(x));
+
             driver.getDriver().get(offersMap.get(x));
             //sprawdzenie, czy wyszukiwarka przeniosła nas na właściwą stronę
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
