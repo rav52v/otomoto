@@ -16,7 +16,7 @@ public class Driver {
 
     public WebDriver getDriver() {
         if (driver == null) {
-            switch(new ConfigurationParser().getSystem()){
+            switch (new ConfigurationParser().getSystem()) {
                 case "windows":
                     System.setProperty("webdriver.chrome.driver", path + "/chromedriver.exe");
                     break;
@@ -49,9 +49,8 @@ public class Driver {
             options.setHeadless(headless);
             options.addArguments("--disable-gpu");
 
-            if(headless){
+            if (headless)
                 options.addArguments("--window-size=1280,1024");
-            }
 
             driver = new ChromeDriver(options);
             driver.manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);

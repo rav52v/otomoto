@@ -62,24 +62,24 @@ public abstract class PageBase {
         File scrFile = ((TakesScreenshot) driver.getDriver()).getScreenshotAs(OutputType.FILE);
         File target = new File("src\\test\\outputFolder\\" + fileName + ".png");
         try {
-            if (target.exists()) {
+            if (target.exists())
                 target.delete();
-            }
+
             Files.copy(scrFile.toPath(), target.toPath());
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
         js.executeScript("document.body.style.zoom='0'");
     }
 
-    protected void saveTextToFile (String textValue, String fileName, boolean append){
+    protected void saveTextToFile(String textValue, String fileName, boolean append) {
         File target = new File(path.toAbsolutePath().toString() + "/" + fileName + ".txt");
 
         try (FileWriter fw = new FileWriter(target, append);
              BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw))
-        {
+             PrintWriter out = new PrintWriter(bw)) {
             out.print(textValue);
+        } catch (IOException e) {
         }
-        catch (IOException e) {}
     }
 
     private void changeImplicitlyWaitTime(int milliSeconds) {

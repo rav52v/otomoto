@@ -39,11 +39,11 @@ public class TestSuite_1 {
         log.logInfo("Mapping offer ids started...");
         SearchPage searchPage = new SearchPage();
         searchPage.mapAllOffers();
-        log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis() - start) / 60000
-                + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis() - start) / searchPage.getMappedOffersSize()) + "} milliseconds");
-
-        log.logInfo("Removing from memory existing records...");
-        dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
+        if (searchPage.getMappedOffersSize() != 0)
+            log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis() - start) / 60000
+                 + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis() - start) / searchPage.getMappedOffersSize()) + "} milliseconds");
+        else
+            log.logInfo("Mapped 0 offers");
 
         ItemPage itemPage = new ItemPage();
         log.logInfo("Switching pages started...");

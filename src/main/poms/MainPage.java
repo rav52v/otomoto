@@ -6,14 +6,14 @@ import org.openqa.selenium.support.FindBy;
 
 public class MainPage extends PageBase {
 
-    @FindBy (css = "a.agree-button.cookiesBarClose")
+    @FindBy(css = "a.agree-button.cookiesBarClose")
     private WebElement cookiesBtn;
 
     public MainPage() {
         acceptCookiesClick();
     }
 
-    private void acceptCookiesClick(){
+    private void acceptCookiesClick() {
         waitAndClick(cookiesBtn);
     }
 

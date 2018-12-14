@@ -21,7 +21,7 @@ public class Log {
         return logKeeper;
     }
 
-    public String getActualTime(){
+    public String getActualTime() {
         cal = Calendar.getInstance();
         time = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss,SSS");
         return time.format(cal.getTime());

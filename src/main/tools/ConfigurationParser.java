@@ -10,6 +10,7 @@ public class ConfigurationParser {
     private String propertiesFileName;
     private String linkAddress;
     private int implicitlyWaitTime;
+    private int maxExistingOffers;
     private String searchLinkAddress;
     private String system;
     private String headless;
@@ -41,6 +42,7 @@ public class ConfigurationParser {
 
         this.linkAddress = getParameterValue("linkAddress");
         this.implicitlyWaitTime = Integer.parseInt(getParameterValue("implicitlyWaitTime"));
+        this.maxExistingOffers = Integer.parseInt(getParameterValue("maxExistingOffers"));
         this.searchLinkAddress = getParameterValue("searchLinkAddress");
         this.system = getParameterValue("system");
         this.headless = getParameterValue("headless");
@@ -111,5 +113,9 @@ public class ConfigurationParser {
 
     public String getSqlPassword() {
         return this.sqlPassword;
+    }
+
+    public int getMaxExistingOffers() {
+        return maxExistingOffers;
     }
 }

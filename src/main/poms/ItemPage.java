@@ -1,6 +1,5 @@
 package main.poms;
 
-import main.tools.ConfigurationParser;
 import main.tools.Converters;
 import main.tools.DataBaseReader;
 import main.utils.Driver;
@@ -130,11 +129,11 @@ public class ItemPage extends PageBase {
         if (isElementFound(mobileBtnField, 500)) {
             mobileBtnField.get(0).click();
             // sprawdzanie, czy zdążył pobrać cały numer
-            if (mobileField.getText().length() < 5) {
-                sleeper(500);
-            } else {
+            if (mobileField.getText().length() < 5)
+                sleeper(300);
+            else
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
-            }
+
         } else
             this.mobile = 0;
 
@@ -152,17 +151,6 @@ public class ItemPage extends PageBase {
 
         this.offerId = Long.parseLong(offerIdField.getText());
 
-//        if (isElementFound(mobileBtnField, 500)) {
-//            mobileBtnField.get(0).click();
-//            // sprawdzanie, czy zdążył pobrać cały numer
-//            if (mobileField.getText().length() < 5) {
-//                sleeper(500);
-//            } else {
-//                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
-//            }
-//        } else
-//            this.mobile = 0;
-
         if (isElementFound(equipmentField, 300)) {
             StringBuilder sb = new StringBuilder();
             for (WebElement feature : equipmentListField)
@@ -179,10 +167,10 @@ public class ItemPage extends PageBase {
             }
             this.description = descriptionField.getText().replaceAll("['\"]", "-");
         } else {
-            if (isElementFound(dislayNumberListField, 0)) {
+            if (isElementFound(dislayNumberListField, 0))
                 for (WebElement displayNumber : dislayNumberListField)
                     click(displayNumber);
-            }
+
             this.description = descriptionField.getText().replaceAll("['\"]", "-");
         }
 
@@ -223,11 +211,11 @@ public class ItemPage extends PageBase {
                     parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
                     parametersMap.remove(key);
                 } else if (key.equals("ofertaOd")) {
-                    if (parametersMap.get(key).equals("Osoby prywatnej")) {
+                    if (parametersMap.get(key).equals("Osoby prywatnej"))
                         parametersMap.replace(key, "1");
-                    } else if (parametersMap.get(key).equals("Firmy")) {
+                    else if (parametersMap.get(key).equals("Firmy"))
                         parametersMap.replace(key, "0");
-                    }
+
                     parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
                     parametersMap.remove(key);
                 } else if (key.equals("paliwo")) {
@@ -512,8 +500,7 @@ public class ItemPage extends PageBase {
     }
 
     public void openMultipleOffersAndSendDataToDataBase() {
-        ConfigurationParser config = new ConfigurationParser();
-        offersMap = dataBase.getCleanedMap();
+        offersMap = new SearchPage().getIdAndLinkMap();
         int i = 1;
         long startTime = System.currentTimeMillis();
 
@@ -533,8 +520,11 @@ public class ItemPage extends PageBase {
             driver.getDriver().get(offersMap.get(x));
 
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
-                log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site, probably offer is no longer available)");
-                continue;
+                sleeper(500);
+                if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))){
+                    log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site, probably offer is no longer available)");
+                    continue;
+                }
             }
             fillParametersMap();
             dataBase.executeQuery(generateSQLQuery());
@@ -543,64 +533,63 @@ public class ItemPage extends PageBase {
         i--;
         long operationTime = System.currentTimeMillis() - startTime;
         // / by zero Exception
-        if (operationTime > 65000) {
+        if (operationTime > 65000)
             log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {" +
                     (operationTime / 60000) + " minutes}, which is {" + i / (operationTime / 60000) + "} offers per minute");
-        } else if (offersMap.size() == 0) {
+        else if (offersMap.size() == 0)
             log.logInfo("Operation is done in {100.00%}, proceeded offers {0}");
-        } else {
+        else
             log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {less then minute)");
-        }
     }
 
     private String generateSQLQuery() {
         setFeatures();
 
-        if (this.dateOfIssue != null) {
+        if (this.dateOfIssue != null)
             parametersStringMap.put("dateOfIssue", this.dateOfIssue);
-        }
-        if (this.title != null) {
+
+        if (this.title != null)
             parametersStringMap.put("title", this.title);
-        }
+
         parametersIntMap.put("price", this.price);
         parametersLongMap.put("offerId", this.offerId);
-        if (this.mobile != 0) {
+        if (this.mobile != 0)
             parametersLongMap.put("mobile", this.mobile);
-        }
+
         parametersStringMap.put("location", this.location);
         parametersStringMap.put("sellerName", this.sellerName);
-        if (this.equipment != null) {
+        if (this.equipment != null)
             parametersStringMap.put("equipment", this.equipment);
-        }
-        if (this.description != null) {
+
+        if (this.description != null)
             parametersStringMap.put("description", this.description);
-        }
+
 
         String query = "INSERT INTO otomoto (";
         String queryFirstPart = "";
 
-        for (String key : parametersStringMap.keySet()) {
+        for (String key : parametersStringMap.keySet())
             queryFirstPart += key.concat(", ");
-        }
-        for (String key : parametersIntMap.keySet()) {
+
+        for (String key : parametersIntMap.keySet())
             queryFirstPart += key.concat(", ");
-        }
-        for (String key : parametersLongMap.keySet()) {
+
+        for (String key : parametersLongMap.keySet())
             queryFirstPart += key.concat(", ");
-        }
+
 
         query += queryFirstPart.replaceAll("(, )$", "") + ") values (";
         String querySecondPart = "";
 
-        for (String key : parametersStringMap.keySet()) {
+        for (String key : parametersStringMap.keySet())
             querySecondPart += "'".concat(parametersStringMap.get(key)).concat("', ");
-        }
-        for (String key : parametersIntMap.keySet()) {
+
+        for (String key : parametersIntMap.keySet())
             querySecondPart += parametersIntMap.get(key) + ", ";
-        }
-        for (String key : parametersLongMap.keySet()) {
+
+        for (String key : parametersLongMap.keySet())
             querySecondPart += parametersLongMap.get(key) + ", ";
-        }
+
 
         query += querySecondPart.replaceAll("(, )$", "") + ")";
 

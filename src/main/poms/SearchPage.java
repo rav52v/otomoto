@@ -1,5 +1,7 @@
 package main.poms;
 
+import main.tools.ConfigurationParser;
+import main.tools.DataBaseReader;
 import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.WebElement;
@@ -21,6 +23,11 @@ public class SearchPage extends PageBase {
     private int allOffers;
     private int mappedOffersSize;
     private long startTime;
+    private int existingRecords;
+    private String offerId;
+    private String link;
+    private DataBaseReader dataBase;
+    private ConfigurationParser config;
 
     @FindBy(css = "div.offers.list > article")
     private List<WebElement> offersList;
@@ -32,30 +39,45 @@ public class SearchPage extends PageBase {
     private WebElement offersCounter;
 
     public SearchPage() {
+        this.dataBase = new DataBaseReader();
+        this.config = new ConfigurationParser();
         this.allOffers = getAllOffers();
         this.log = new Log();
-        if (idAndLinkHolder == null){
+        if (idAndLinkHolder == null)
             idAndLinkHolder = new HashMap<>();
-        }
         this.startTime = System.currentTimeMillis();
     }
 
     private void addOffersFromCurrentPageToMap(Map<String, String> map) {
         for (WebElement offer : offersList) {
-            map.put(offer.getAttribute("data-ad-id"), offer.getAttribute("data-href"));
-            mappedOffersSize = map.size();
+            offerId = offer.getAttribute("data-ad-id");
+            link = offer.getAttribute("data-href");
+
+            if (!dataBase.checkIfOfferIdExist(offerId)) {
+                map.put(offerId, link);
+                mappedOffersSize = map.size();
+            } else
+                this.existingRecords++;
         }
     }
 
     public void mapAllOffers() {
         log.logInfo("All offers {" + (allOffers) + "}");
+
+        int maxExistingRecords = config.getMaxExistingOffers();
+
         do {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
-            if (isElementFound(nextPageBtn, 3000)){
-                click(nextPageBtn.get(0));
+
+            if (existingRecords > maxExistingRecords) {
+                log.logInfo("Mapping over is broken due to {" + existingRecords + "} repeated records in database.");
+                break;
             }
-            //dodawanie logów
-            if ((allOffers - getMappedOffersSize()) % 5 == 0){
+
+            if (isElementFound(nextPageBtn, 3000))
+                click(nextPageBtn.get(0));
+
+            if ((allOffers - getMappedOffersSize()) % 5 == 0) {
                 double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) getMappedOffersSize()
                         / (double) allOffers))).replaceAll(",", "."));
                 double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
@@ -63,7 +85,9 @@ public class SearchPage extends PageBase {
                 log.logInfo("Operation is done in {" + percentDone + "%}, mapped offers {" + getMappedOffersSize() +
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
+
         } while (isElementFound(nextPageBtn, 3000));
+
         addOffersFromCurrentPageToMap(idAndLinkHolder);
     }
 
@@ -75,8 +99,7 @@ public class SearchPage extends PageBase {
         return Integer.parseInt(offersCounter.getText().replaceAll("[)( ]", ""));
     }
 
-    public static Map<String, String> getIdAndLinkMap(){
+    public Map<String, String> getIdAndLinkMap() {
         return idAndLinkHolder;
     }
-
 }
