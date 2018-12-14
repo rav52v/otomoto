@@ -15,6 +15,7 @@ public class DataBaseReader {
     private String login;
     private Log log;
     private ConfigurationParser config;
+    private static Map<String, String> cleanedMap;
 
     public DataBaseReader() {
         config = new ConfigurationParser();
@@ -43,9 +44,8 @@ public class DataBaseReader {
         return false;
     }
 
-    public Map<String, String> cleanMapFromExistingRecords(Map<String, String> mapToClean) {
-        log.logInfo("Removing from memory existing records...");
-        Map<String, String> cleanedMap = new HashMap<>();
+    public void cleanMapFromExistingRecords(Map<String, String> mapToClean) {
+        cleanedMap = new HashMap<>();
         long start = System.currentTimeMillis();
         for (String x : mapToClean.keySet()){
             if(!checkIfOfferIdExist(x)){
@@ -54,7 +54,6 @@ public class DataBaseReader {
         }
         log.logInfo("Database already contains {" + (mapToClean.size() - cleanedMap.size()) + "}, map with offers now contains {"
                 + cleanedMap.size() + "}, operation took {" + (System.currentTimeMillis() - start)/1000 + " seconds}");
-            return cleanedMap;
     }
 
     public void executeQuery(String query){
@@ -62,6 +61,10 @@ public class DataBaseReader {
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.executeUpdate();
         } catch (SQLException e) {/*Exception Ignored*/}
+    }
+
+    public Map<String, String> getCleanedMap(){
+        return cleanedMap;
     }
 
 }

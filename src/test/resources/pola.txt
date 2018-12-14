@@ -13,7 +13,6 @@ ID, offerId -long
 
 --------------------parametry oferty
 Oferta od, ofertaOd -int
-Kategoria, kategoria -string
 Marka pojazdu, marka -string
 Model pojazdu, model -string
 Wersja, wersja -string

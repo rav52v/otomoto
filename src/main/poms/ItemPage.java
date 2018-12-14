@@ -1,5 +1,6 @@
 package main.poms;
 
+import main.tools.ConfigurationParser;
 import main.tools.Converters;
 import main.tools.DataBaseReader;
 import main.utils.Driver;
@@ -15,12 +16,12 @@ import java.util.Map;
 
 public class ItemPage extends PageBase {
     private enum ParamNames {
-        AVAILABLE_PARAMETERS("Oferta od", "Kategoria", "Marka pojazdu", "Model pojazdu", "Wersja", "Rok produkcji", "Przebieg",
+        AVAILABLE_PARAMETERS("Oferta od", "Marka pojazdu", "Model pojazdu", "Wersja", "Rok produkcji", "Przebieg",
                 "Pojemność skokowa", "VIN", "Rodzaj paliwa", "Moc", "Skrzynia biegów", "Uszkodzony", "Napęd", "Typ",
                 "Liczba drzwi", "Liczba miejsc", "Kierownica po prawej (Anglik)", "Kolor", "Pierwsza rejestracja",
                 "Kraj pochodzenia", "Numer rejestracyjny pojazdu", "Zarejestrowany w Polsce", "Tuning",
                 "Serwisowany w ASO", "Zarejestrowany jako zabytek", "Bezwypadkowy", "Stan"),
-        TRANSFORM_TO_PARAMETERS("ofertaOd", "kategoria", "marka", "model", "wersja", "rok", "przebieg",
+        TRANSFORM_TO_PARAMETERS("ofertaOd", "marka", "model", "wersja", "rok", "przebieg",
                 "pojemnosc", "vin", "paliwo", "moc", "skrzynia", "uszkodzony", "naped", "typ",
                 "drzwi", "miejsca", "anglik", "kolor", "pierwszaRejestracja",
                 "krajPochodzenia", "numerRej", "pl", "tuning",
@@ -59,6 +60,7 @@ public class ItemPage extends PageBase {
     private DataBaseReader dataBase;
     private Log log;
     private Converters converter;
+    private Map<String, String> offersMap;
 
     private String location;
     private String dateOfIssue;
@@ -125,6 +127,17 @@ public class ItemPage extends PageBase {
     }
 
     private void setFeatures() {
+        if (isElementFound(mobileBtnField, 500)) {
+            mobileBtnField.get(0).click();
+            // sprawdzanie, czy zdążył pobrać cały numer
+            if (mobileField.getText().length() < 5) {
+                sleeper(500);
+            } else {
+                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
+            }
+        } else
+            this.mobile = 0;
+
         if (isElementFound(dateOfIssueField, 500))
             this.dateOfIssue = converter.getDateFromDateOfIssue(dateOfIssueField.get(0).getText().trim());
         else
@@ -139,16 +152,16 @@ public class ItemPage extends PageBase {
 
         this.offerId = Long.parseLong(offerIdField.getText());
 
-        if (isElementFound(mobileBtnField, 500)) {
-            mobileBtnField.get(0).click();
-            // sprawdzanie, czy zdążył pobrać cały numer
-            if (mobileField.getText().length() < 5) {
-                sleeper(500);
-            } else {
-                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
-            }
-        } else
-            this.mobile = 0;
+//        if (isElementFound(mobileBtnField, 500)) {
+//            mobileBtnField.get(0).click();
+//            // sprawdzanie, czy zdążył pobrać cały numer
+//            if (mobileField.getText().length() < 5) {
+//                sleeper(500);
+//            } else {
+//                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
+//            }
+//        } else
+//            this.mobile = 0;
 
         if (isElementFound(equipmentField, 300)) {
             StringBuilder sb = new StringBuilder();
@@ -499,14 +512,13 @@ public class ItemPage extends PageBase {
     }
 
     public void openMultipleOffersAndSendDataToDataBase() {
-        Map<String, String> offersMap = dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
+        ConfigurationParser config = new ConfigurationParser();
+        offersMap = dataBase.getCleanedMap();
         int i = 1;
-        log.logInfo("Switching pages started...");
         long startTime = System.currentTimeMillis();
 
         for (String x : offersMap.keySet()) {
             if (i % 10 == 0) {
-                //dodawanie logów
                 double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) i
                         / (double) offersMap.size()))).replaceAll(",", "."));
                 double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
@@ -516,12 +528,12 @@ public class ItemPage extends PageBase {
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
 
-            System.out.println(offersMap.get(x));
+            saveTextToFile(offersMap.get(x), "lastLink", false);
 
             driver.getDriver().get(offersMap.get(x));
-            //sprawdzenie, czy wyszukiwarka przeniosła nas na właściwą stronę
+
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
-                log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site)");
+                log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site, probably offer is no longer available)");
                 continue;
             }
             fillParametersMap();

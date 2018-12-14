@@ -15,11 +15,22 @@ public class Converters {
     }
 
     private int getYear(String date){
-        return Integer.parseInt(date.substring(date.length() - 4));
+        if (date.length() < 4)
+            return 1;
+
+        String result = date.substring(date.length() - 4);
+
+        if (result.matches("[0-9]{4}"))
+            return Integer.parseInt(result);
+        else
+            return 1;
     }
 
     private int getMonth(String date){
         String result = date.replaceAll("[\\d]|[\\s]", "");
+
+        if (result.length() < 3)
+            return 1;
 
         if (result.equals("styczeń") || result.equals("stycznia")){
             result = "01";
@@ -46,10 +57,14 @@ public class Converters {
         } else if (result.equals("grudzień") || result.equals("grudnia")){
             result = "12";
         }
+
         return Integer.parseInt(result);
     }
 
     private int getDay(String date){
+        if (!Character.isDigit(date.charAt(0)))
+            return 1;
+
         return Integer.parseInt(date.replaceAll(" .+ \\d{4}$", ""));
     }
 }

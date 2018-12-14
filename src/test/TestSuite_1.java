@@ -9,8 +9,6 @@ import main.tools.Email;
 import main.utils.Driver;
 import main.utils.Log;
 
-import javax.mail.Session;
-
 public class TestSuite_1 {
 
     public static void main(String[] args) {
@@ -44,7 +42,11 @@ public class TestSuite_1 {
         log.logInfo("Mapped {" + searchPage.getMappedOffersSize() + "} offers, it took {" + (System.currentTimeMillis() - start) / 60000
                 + " minutes}, which is 1 offer per {" + ((System.currentTimeMillis() - start) / searchPage.getMappedOffersSize()) + "} milliseconds");
 
+        log.logInfo("Removing from memory existing records...");
+        dataBase.cleanMapFromExistingRecords(SearchPage.getIdAndLinkMap());
+
         ItemPage itemPage = new ItemPage();
+        log.logInfo("Switching pages started...");
         itemPage.openMultipleOffersAndSendDataToDataBase();
 
         driver.afterTest(0);

@@ -7,19 +7,22 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class PageBase {
 
     private Driver driver;
+    private Path path;
 
     protected PageBase() {
         driver = new Driver();
         PageFactory.initElements(driver.getDriver(), this);
+        path = Paths.get("src", "test", "outputFolder");
     }
 
     protected void click(WebElement element) {
@@ -65,6 +68,18 @@ public abstract class PageBase {
             Files.copy(scrFile.toPath(), target.toPath());
         } catch (IOException e) {}
         js.executeScript("document.body.style.zoom='0'");
+    }
+
+    protected void saveTextToFile (String textValue, String fileName, boolean append){
+        File target = new File(path.toAbsolutePath().toString() + "/" + fileName + ".txt");
+
+        try (FileWriter fw = new FileWriter(target, append);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw))
+        {
+            out.print(textValue);
+        }
+        catch (IOException e) {}
     }
 
     private void changeImplicitlyWaitTime(int milliSeconds) {

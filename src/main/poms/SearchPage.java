@@ -48,7 +48,7 @@ public class SearchPage extends PageBase {
     }
 
     public void mapAllOffers() {
-        log.logInfo("All offers {" + String.valueOf(allOffers) + "}");
+        log.logInfo("All offers {" + (allOffers) + "}");
         do {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
             if (isElementFound(nextPageBtn, 3000)){
@@ -63,7 +63,7 @@ public class SearchPage extends PageBase {
                 log.logInfo("Operation is done in {" + percentDone + "%}, mapped offers {" + getMappedOffersSize() +
                         "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
             }
-        } while (isElementFound(nextPageBtn, 4000));
+        } while (isElementFound(nextPageBtn, 3000));
         addOffersFromCurrentPageToMap(idAndLinkHolder);
     }
 

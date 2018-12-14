@@ -26,13 +26,13 @@ public class Driver {
             }
 
             ChromeOptions options = new ChromeOptions();
+
             HashMap<String, Object> images = new HashMap<>();
             images.put("images", 2);
             HashMap<String, Object> prefs = new HashMap<>();
             prefs.put("profile.managed_default_content_settings.images", 2);
             options.setExperimentalOption("prefs", prefs);
 
-            //adblock:
 //            options.addExtensions(new File("src\\main\\resources\\adblock.crx"));
 
             options.addArguments("start-maximized");
@@ -48,25 +48,26 @@ public class Driver {
             boolean headless = new ConfigurationParser().getHeadless();
             options.setHeadless(headless);
             options.addArguments("--disable-gpu");
+
             if(headless){
                 options.addArguments("--window-size=1280,1024");
             }
 
             driver = new ChromeDriver(options);
+            driver.manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);
             driver.get(new ConfigurationParser().getLinkAddress());
         }
         return driver;
     }
 
     private void closeDriver() {
-        driver.close();
+        driver.quit();
         driver = null;
     }
 
     public void beforeTest() {
         getDriver().manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);
     }
-
 
     public void afterTest(int sleepAfter) {
         try {
