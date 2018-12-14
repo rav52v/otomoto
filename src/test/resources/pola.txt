@@ -75,6 +75,7 @@ typ "Minivan" = 5
 typ "SUV" = 6
 typ "Kabriolet" = 7
 typ "Coupe" = 8
+typ "OTHER" = 100  (e.g. "compact/minivan")
 
 stan "U¿ywane" = 0
 stan "Nowe" = 1

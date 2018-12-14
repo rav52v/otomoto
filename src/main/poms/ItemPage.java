@@ -316,6 +316,8 @@ public class ItemPage extends PageBase {
                         case "Coupe":
                             parametersMap.replace(key, "8");
                             break;
+                        default:
+                            parametersMap.replace(key, "100");
                     }
                     parametersIntMap.put(key, Integer.parseInt(parametersMap.get(key)));
                     parametersMap.remove(key);
@@ -523,7 +525,7 @@ public class ItemPage extends PageBase {
 
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                 sleeper(500);
-                if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))){
+                if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                     log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (probably offer is no longer available)");
                     failedCounter++;
                     continue;
@@ -594,6 +596,9 @@ public class ItemPage extends PageBase {
             querySecondPart += parametersLongMap.get(key) + ", ";
 
 
+        parametersLongMap.clear();
+        parametersIntMap.clear();
+        parametersStringMap.clear();
         query += querySecondPart.replaceAll("(, )$", "") + ")";
 
         return query;
