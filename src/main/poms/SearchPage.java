@@ -2,6 +2,7 @@ package main.poms;
 
 import main.tools.ConfigurationParser;
 import main.tools.DataBaseReader;
+import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.WebElement;
@@ -28,6 +29,8 @@ public class SearchPage extends PageBase {
     private String link;
     private DataBaseReader dataBase;
     private ConfigurationParser config;
+    private String actuallyPage;
+    private Driver driver;
 
     @FindBy(css = "div.offers.list > article")
     private List<WebElement> offersList;
@@ -43,6 +46,7 @@ public class SearchPage extends PageBase {
         this.config = new ConfigurationParser();
         this.allOffers = getAllOffers();
         this.log = new Log();
+        this.driver = new Driver();
         if (idAndLinkHolder == null)
             idAndLinkHolder = new HashMap<>();
         this.startTime = System.currentTimeMillis();
@@ -63,28 +67,24 @@ public class SearchPage extends PageBase {
 
     public void mapAllOffers() {
         log.logInfo("All offers {" + (allOffers) + "}");
-
+        int allAvailablePages = allOffers / 32;
         int maxExistingRecords = config.getMaxExistingOffers();
 
         do {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
 
             if (existingRecords > maxExistingRecords) {
-                log.logInfo("Mapping over is broken due to {" + existingRecords + "} repeated records in database.");
+                log.logInfo("Mapping over, is interrupted due to {" + existingRecords + "} repeated records in database.");
                 break;
             }
 
-            if (isElementFound(nextPageBtn, 3000))
+            if (isElementFound(nextPageBtn, 3000)){
                 click(nextPageBtn.get(0));
-
-            if ((allOffers - getMappedOffersSize()) % 5 == 0) {
-                double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) getMappedOffersSize()
-                        / (double) allOffers))).replaceAll(",", "."));
-                double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
-                double timeLeftInMinutes = (100.0 / percentDone) * (passedTimeInMinutes) - passedTimeInMinutes + 1.0;
-                log.logInfo("Operation is done in {" + percentDone + "%}, mapped offers {" + getMappedOffersSize() +
-                        "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
+                actuallyPage = driver.getDriver().getCurrentUrl().replaceAll("^.+page=", "");
             }
+
+            if ((allOffers - getMappedOffersSize()) % 5 == 0)
+                log.logInfo("Adding offers to map, already mapped {" + getMappedOffersSize() + "}, actually page {" + actuallyPage + "/" + allAvailablePages + "}...");
 
         } while (isElementFound(nextPageBtn, 3000));
 
