@@ -501,18 +501,20 @@ public class ItemPage extends PageBase {
 
     public void openMultipleOffersAndSendDataToDataBase() {
         offersMap = new SearchPage().getIdAndLinkMap();
-        int i = 1;
+        int proceededCounter = 1;
+        int failedCounter = 0;
         long startTime = System.currentTimeMillis();
 
         for (String x : offersMap.keySet()) {
-            if (i % 10 == 0) {
-                double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) i
+            if ((proceededCounter + failedCounter) % 10 == 0) {
+                double percentDone = Double.parseDouble(String.format("%.2f", (100.0 * ((double) (proceededCounter + failedCounter)
                         / (double) offersMap.size()))).replaceAll(",", "."));
                 double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
                 double timeLeftInMinutes = (100.0 / percentDone) * (passedTimeInMinutes) - passedTimeInMinutes + 1.0;
 
-                log.logInfo("Operation is done in {" + percentDone + "%}, processing offer {" + i + "/" + offersMap.size() +
-                        "}, estimated time {" + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "") + " minutes}");
+                log.logInfo("Operation is done in {" + percentDone + "%}, processing offer {" + (proceededCounter + failedCounter)
+                        + "/" + offersMap.size() + "}, estimated time {" + String.valueOf(timeLeftInMinutes)
+                        .replaceAll(".\\d+$", "") + " minutes}");
             }
 
             saveTextToFile(offersMap.get(x), "lastLink", false);
@@ -522,24 +524,25 @@ public class ItemPage extends PageBase {
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                 sleeper(500);
                 if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))){
-                    log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (navigated to wrong site, probably offer is no longer available)");
+                    log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (probably offer is no longer available)");
+                    failedCounter++;
                     continue;
                 }
             }
             fillParametersMap();
             dataBase.executeQuery(generateSQLQuery());
-            i++;
+            proceededCounter++;
         }
-        i--;
+        proceededCounter--;
         long operationTime = System.currentTimeMillis() - startTime;
         // / by zero Exception
         if (operationTime > 65000)
-            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {" +
-                    (operationTime / 60000) + " minutes}, which is {" + i / (operationTime / 60000) + "} offers per minute");
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + proceededCounter + "}, operation took {" +
+                    (operationTime / 60000) + " minutes}, which is {" + proceededCounter / (operationTime / 60000) + "} offers per minute");
         else if (offersMap.size() == 0)
             log.logInfo("Operation is done in {100.00%}, proceeded offers {0}");
         else
-            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + i + "}, operation took {less then minute)");
+            log.logInfo("Operation is done in {100.00%}, proceeded offers {" + proceededCounter + "}, operation took {less then minute)");
     }
 
     private String generateSQLQuery() {
