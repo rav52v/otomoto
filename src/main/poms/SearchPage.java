@@ -57,7 +57,13 @@ public class SearchPage extends PageBase {
             offerId = offer.getAttribute("data-ad-id");
             link = offer.getAttribute("data-href");
 
-            if (!dataBase.checkIfOfferIdExist(offerId)) {
+            // sprawdzam, czy jest w bazie nieaktualnych
+            if (dataBase.checkIfOfferIdExist("otomotonieaktualne", offerId)){
+                System.out.println(dataBase.checkIfOfferIdExist("otomotonieaktualne", offerId));
+                continue;
+            }
+
+            if (!dataBase.checkIfOfferIdExist("otomoto", offerId)) {
                 map.put(offerId, link);
                 mappedOffersSize = map.size();
             } else

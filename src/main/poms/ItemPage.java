@@ -539,6 +539,10 @@ public class ItemPage extends PageBase {
                 sleeper(500);
                 if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                     log.logInfo("ERROR while loading page {" + offersMap.get(x) + "} (probably offer is no longer available)");
+
+                    // dodanie nieaktualnego rekordu do drugiej bazy danych
+                    dataBase.executeQuery("INSERT INTO otomotonieaktualne (offerId) values (" + x + ")");
+
                     failedCounter++;
                     continue;
                 }
