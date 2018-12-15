@@ -9,6 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,8 @@ public class ItemPage extends PageBase {
     private Log log;
     private Converters converter;
     private Map<String, String> offersMap;
+    private Calendar calendar;
+    private SimpleDateFormat time;
 
     private String location;
     private String dateOfIssue;
@@ -126,12 +130,13 @@ public class ItemPage extends PageBase {
     }
 
     private void setFeatures() {
-        if (isElementFound(mobileBtnField, 500)) {
+        if (isElementFound(mobileBtnField, 5000)) {
             mobileBtnField.get(0).click();
             // sprawdzanie, czy zdążył pobrać cały numer
-            if (mobileField.getText().length() < 5)
+            if (mobileField.getText().length() < 5) {
                 sleeper(300);
-            else
+                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
+            } else
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
 
         } else
@@ -514,9 +519,16 @@ public class ItemPage extends PageBase {
                 double passedTimeInMinutes = (System.currentTimeMillis() - startTime) / 60000.0;
                 double timeLeftInMinutes = (100.0 / percentDone) * (passedTimeInMinutes) - passedTimeInMinutes + 1.0;
 
-                log.logInfo("Operation is done in {" + percentDone + "%}, processing offer {" + (proceededCounter + failedCounter)
-                        + "/" + offersMap.size() + "}, estimated time {" + String.valueOf(timeLeftInMinutes)
-                        .replaceAll(".\\d+$", "") + " minutes}");
+
+                calendar = Calendar.getInstance();
+                calendar.add(Calendar.MINUTE, (int) timeLeftInMinutes);
+                time = new SimpleDateFormat("HH:mm");
+
+
+                log.logInfo("Operation is done in {" + percentDone + "%}, processing offer {" + (proceededCounter
+                        + failedCounter) + "/" + offersMap.size() + "}, estimated time {"
+                        + String.valueOf(timeLeftInMinutes).replaceAll(".\\d+$", "")
+                        + " minutes}, it is about {" + time.format(calendar.getTime()) + "}");
             }
 
             saveTextToFile(offersMap.get(x), "lastLink", false);
@@ -595,10 +607,12 @@ public class ItemPage extends PageBase {
         for (String key : parametersLongMap.keySet())
             querySecondPart += parametersLongMap.get(key) + ", ";
 
-
         parametersLongMap.clear();
         parametersIntMap.clear();
         parametersStringMap.clear();
+        this.mobile = 0;
+        this.equipment = null;
+        this.description = null;
         query += querySecondPart.replaceAll("(, )$", "") + ")";
 
         return query;

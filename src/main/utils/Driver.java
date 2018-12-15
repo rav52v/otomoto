@@ -2,6 +2,7 @@ package main.utils;
 
 import main.tools.ConfigurationParser;
 import org.openqa.selenium.PageLoadStrategy;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -33,9 +34,8 @@ public class Driver {
             prefs.put("profile.managed_default_content_settings.images", 2);
             options.setExperimentalOption("prefs", prefs);
 
-//            options.addExtensions(new File("src\\main\\resources\\adblock.crx"));
+//            options.addExtensions(new File("src/main/resources/adblock.crx"));
 
-            options.addArguments("start-maximized");
             options.addArguments("disable-boot-animation");
             options.addArguments("--disable-2d-canvas-image-chromium");
             options.addArguments("--disable-javascript-harmony-shipping");
@@ -43,14 +43,20 @@ public class Driver {
             options.addArguments("--fast-start");
             options.addArguments("--disable-renderer-backgrounding");
             options.addArguments("--disable-popup-blocking");
-            options.addArguments("--incognito");
+//            options.addArguments("--incognito");
             options.addArguments("--disable-infobars");
             boolean headless = new ConfigurationParser().getHeadless();
             options.setHeadless(headless);
             options.addArguments("--disable-gpu");
 
+            options.addArguments("enable-automation");
+            options.addArguments("--disable-javascript");
+
+
             if (headless)
                 options.addArguments("--window-size=1280,1024");
+            else
+                options.addArguments("start-maximized");
 
             driver = new ChromeDriver(options);
             driver.manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);
