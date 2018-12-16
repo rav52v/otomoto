@@ -1,9 +1,6 @@
 package main.tools;
 
-import main.utils.Log;
-
 import java.sql.*;
-import java.util.Map;
 
 public class DataBaseReader {
 
@@ -11,16 +8,13 @@ public class DataBaseReader {
     private String conUrl;
     private String pass;
     private String login;
-    private Log log;
     private ConfigurationParser config;
-    private static Map<String, String> cleanedMap;
 
     public DataBaseReader() {
         config = new ConfigurationParser();
         conUrl = config.getConUrl();
         login = config.getSqlLogin();
         pass = config.getSqlPassword();
-        log = new Log();
 
         try {
             con = DriverManager.getConnection(conUrl, login, pass);

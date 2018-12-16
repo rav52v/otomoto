@@ -102,6 +102,7 @@ public class SearchPage extends PageBase {
     }
 
     private int getAllOffers() {
+        sleeper(500);
         return Integer.parseInt(offersCounter.getText().replaceAll("[)( ]", ""));
     }
 
