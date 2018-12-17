@@ -134,12 +134,13 @@ public class ItemPage extends PageBase {
         if (isElementFound(mobileBtnField, 5000)) {
             mobileBtnField.get(0).click();
             // sprawdzanie, czy zdążył pobrać cały numer
-            if (mobileField.getText().length() < 5) {
+            if (mobileField.getText().length() < 5 && mobileField.getText().length() != 0) {
                 sleeper(500);
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
+            } else if (mobileField.getText().length() == 0){
+                this.mobile = 0;
             } else
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
-
         } else
             this.mobile = 0;
 
@@ -153,11 +154,11 @@ public class ItemPage extends PageBase {
         else
             this.title = null;
 
-        if (isElementFound(priceField, 500)){
+        if (isElementFound(priceField, 500)) {
             this.price = Integer.parseInt(priceField.get(0).getAttribute("data-price").replaceAll("[ ,.-]", ""));
         }
 
-        if (isElementFound(offerIdField, 500)){
+        if (isElementFound(offerIdField, 500)) {
             this.offerId = Long.parseLong(offerIdField.get(0).getText());
         }
 
@@ -538,7 +539,7 @@ public class ItemPage extends PageBase {
 
             saveTextToFile(offersMap.get(x), "lastLink", false);
 
-            try{
+            try {
                 driver.getDriver().get(offersMap.get(x));
             } catch (TimeoutException exception) {
                 System.out.println("Timeout noticed.");
