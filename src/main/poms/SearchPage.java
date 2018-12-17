@@ -59,10 +59,8 @@ public class SearchPage extends PageBase {
             link = offer.getAttribute("data-href");
 
             // sprawdzam, czy jest w bazie nieaktualnych
-            if (dataBase.checkIfOfferIdExist("otomotonieaktualne", offerId)){
-                System.out.println(dataBase.checkIfOfferIdExist("otomotonieaktualne", offerId));
+            if (dataBase.checkIfOfferIdExist("otomotonieaktualne", offerId))
                 continue;
-            }
 
             if (!dataBase.checkIfOfferIdExist("otomoto", offerId)) {
                 map.put(offerId, link);
