@@ -5,6 +5,7 @@ import main.tools.DataBaseReader;
 import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -85,7 +86,13 @@ public class SearchPage extends PageBase {
             }
 
             if (isElementFound(nextPageBtn, 3000)){
-                click(nextPageBtn.get(0));
+                try {
+                    click(nextPageBtn.get(0));
+                } catch (TimeoutException exception) {
+                    System.out.println("Timeout noticed.");
+                    click(nextPageBtn.get(0));
+                }
+
                 actuallyPage = driver.getDriver().getCurrentUrl().replaceAll("^.+page=", "");
             }
 
