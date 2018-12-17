@@ -13,6 +13,8 @@ public class ConfigurationParser {
     private int maxExistingOffers;
     private String searchLinkAddress;
     private String system;
+
+    private String browserType;
     private String headless;
 
     private String receiverEmail;
@@ -45,6 +47,8 @@ public class ConfigurationParser {
         this.maxExistingOffers = Integer.parseInt(getParameterValue("maxExistingOffers"));
         this.searchLinkAddress = getParameterValue("searchLinkAddress");
         this.system = getParameterValue("system");
+
+        this.browserType = getParameterValue("browserType");
         this.headless = getParameterValue("headless");
 
         this.receiverEmail = getParameterValue("receiverEmail");
@@ -117,5 +121,9 @@ public class ConfigurationParser {
 
     public int getMaxExistingOffers() {
         return maxExistingOffers;
+    }
+
+    public String getBrowserType() {
+        return this.browserType;
     }
 }

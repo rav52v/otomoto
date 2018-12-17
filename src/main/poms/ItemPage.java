@@ -6,6 +6,7 @@ import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -91,13 +92,13 @@ public class ItemPage extends PageBase {
     private List<WebElement> dateOfIssueField;
 
     @FindBy(css = "div.offer-price")
-    private WebElement priceField;
+    private List<WebElement> priceField;
 
     @FindBy(css = "h1.offer-title.big-text")
     private List<WebElement> titleField;
 
     @FindBy(css = ".offer-content__metabar > div > span:last-child > span:last-child")
-    private WebElement offerIdField;
+    private List<WebElement> offerIdField;
 
     @FindBy(css = "a.read-more")
     private List<WebElement> readMoreBtnField;
@@ -134,7 +135,7 @@ public class ItemPage extends PageBase {
             mobileBtnField.get(0).click();
             // sprawdzanie, czy zdążył pobrać cały numer
             if (mobileField.getText().length() < 5) {
-                sleeper(300);
+                sleeper(500);
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
             } else
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
@@ -152,9 +153,13 @@ public class ItemPage extends PageBase {
         else
             this.title = null;
 
-        this.price = Integer.parseInt(priceField.getAttribute("data-price").replaceAll("[ ,.-]", ""));
+        if (isElementFound(priceField, 500)){
+            this.price = Integer.parseInt(priceField.get(0).getAttribute("data-price").replaceAll("[ ,.-]", ""));
+        }
 
-        this.offerId = Long.parseLong(offerIdField.getText());
+        if (isElementFound(offerIdField, 500)){
+            this.offerId = Long.parseLong(offerIdField.get(0).getText());
+        }
 
         if (isElementFound(equipmentField, 300)) {
             StringBuilder sb = new StringBuilder();
@@ -533,7 +538,12 @@ public class ItemPage extends PageBase {
 
             saveTextToFile(offersMap.get(x), "lastLink", false);
 
-            driver.getDriver().get(offersMap.get(x));
+            try{
+                driver.getDriver().get(offersMap.get(x));
+            } catch (TimeoutException exception) {
+                System.out.println("Timeout noticed.");
+                driver.getDriver().get(offersMap.get(x));
+            }
 
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
                 sleeper(500);
