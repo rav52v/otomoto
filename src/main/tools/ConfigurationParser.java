@@ -1,4 +1,4 @@
-package main.tools; //place this file in same dir as runnable jar / project dir
+package main.tools;
 
 import java.io.*;
 import java.util.Properties;
@@ -10,6 +10,7 @@ public class ConfigurationParser {
     private String propertiesFileName;
     private String linkAddress;
     private int implicitlyWaitTime;
+    private int pageLoadTime;
     private int maxExistingOffers;
     private String searchLinkAddress;
     private String system;
@@ -44,6 +45,7 @@ public class ConfigurationParser {
 
         this.linkAddress = getParameterValue("linkAddress");
         this.implicitlyWaitTime = Integer.parseInt(getParameterValue("implicitlyWaitTime"));
+        this.pageLoadTime = Integer.parseInt(getParameterValue("pageLoadTime"));
         this.maxExistingOffers = Integer.parseInt(getParameterValue("maxExistingOffers"));
         this.searchLinkAddress = getParameterValue("searchLinkAddress");
         this.system = getParameterValue("system");
@@ -61,6 +63,10 @@ public class ConfigurationParser {
         this.sqlLogin = getParameterValue("sqlLogin");
         this.sqlPassword = getParameterValue("sqlPassword");
 
+    }
+
+    private String getParameterValue(String name){
+        return prop.getProperty(name);
     }
 
     public String getLinkAddress() {
@@ -81,10 +87,6 @@ public class ConfigurationParser {
 
     public boolean getHeadless(){
         return Boolean.parseBoolean(this.headless);
-    }
-
-    private String getParameterValue(String name){
-        return prop.getProperty(name);
     }
 
     public String getReceiverEmail() {
@@ -125,5 +127,9 @@ public class ConfigurationParser {
 
     public String getBrowserType() {
         return this.browserType;
+    }
+
+    public int getPageLoadTime() {
+        return this.pageLoadTime;
     }
 }

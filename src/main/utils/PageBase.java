@@ -67,6 +67,7 @@ public abstract class PageBase {
 
             Files.copy(scrFile.toPath(), target.toPath());
         } catch (IOException e) {
+            e.printStackTrace();
         }
         js.executeScript("document.body.style.zoom='0'");
     }
@@ -79,6 +80,7 @@ public abstract class PageBase {
              PrintWriter out = new PrintWriter(bw)) {
             out.print(textValue);
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,5 +90,13 @@ public abstract class PageBase {
 
     private void changeBackImplicitlyWaitTime() {
         driver.getDriver().manage().timeouts().implicitlyWait(new ConfigurationParser().getImplicitlyWaitTime(), TimeUnit.SECONDS);
+    }
+
+    protected void changePageLoadTimeout(int seconds) {
+        driver.getDriver().manage().timeouts().pageLoadTimeout(seconds, TimeUnit.SECONDS);
+    }
+
+    protected void changeBackPageLoadTimeout() {
+        driver.getDriver().manage().timeouts().pageLoadTimeout(60000, TimeUnit.MILLISECONDS);
     }
 }

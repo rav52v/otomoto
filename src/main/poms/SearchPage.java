@@ -5,8 +5,10 @@ import main.tools.DataBaseReader;
 import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.HashMap;
@@ -24,7 +26,6 @@ public class SearchPage extends PageBase {
     private Log log;
     private int allOffers;
     private int mappedOffersSize;
-    private long startTime;
     private int existingRecords;
     private String offerId;
     private String link;
@@ -32,6 +33,7 @@ public class SearchPage extends PageBase {
     private ConfigurationParser config;
     private String actuallyPage;
     private Driver driver;
+    private int pageLoadTime;
 
     @FindBy(css = "div.offers.list > article")
     private List<WebElement> offersList;
@@ -45,12 +47,12 @@ public class SearchPage extends PageBase {
     public SearchPage() {
         this.dataBase = new DataBaseReader();
         this.config = new ConfigurationParser();
+        this.pageLoadTime = config.getPageLoadTime();
         this.allOffers = getAllOffers();
         this.log = new Log();
         this.driver = new Driver();
         if (idAndLinkHolder == null)
             idAndLinkHolder = new HashMap<>();
-        this.startTime = System.currentTimeMillis();
     }
 
     private void addOffersFromCurrentPageToMap(Map<String, String> map) {
@@ -77,18 +79,19 @@ public class SearchPage extends PageBase {
 
         do {
             addOffersFromCurrentPageToMap(idAndLinkHolder);
+            changePageLoadTimeout(pageLoadTime);
 
             if (existingRecords > maxExistingRecords) {
                 log.logInfo("Mapping over, is interrupted due to {" + existingRecords + "} repeated records in database.");
                 break;
             }
 
-            if (isElementFound(nextPageBtn, 3000)){
+            if (isElementFound(nextPageBtn, 2000)) {
                 try {
                     click(nextPageBtn.get(0));
                 } catch (TimeoutException exception) {
-                    System.out.println("Timeout noticed.");
-                    click(nextPageBtn.get(0));
+                    new Actions(driver.getDriver()).sendKeys(Keys.ESCAPE).perform();
+                    sleeper(5000);
                 }
 
                 actuallyPage = driver.getDriver().getCurrentUrl().replaceAll("^.+page=", "");
@@ -98,6 +101,7 @@ public class SearchPage extends PageBase {
                 log.logInfo("Adding offers to map, already mapped {" + getMappedOffersSize() + "}, actually page {" + actuallyPage + "/" + allAvailablePages + "}...");
 
         } while (isElementFound(nextPageBtn, 3000));
+        changeBackPageLoadTimeout();
 
         addOffersFromCurrentPageToMap(idAndLinkHolder);
     }

@@ -1,13 +1,16 @@
 package main.poms;
 
+import main.tools.ConfigurationParser;
 import main.tools.Converters;
 import main.tools.DataBaseReader;
 import main.utils.Driver;
 import main.utils.Log;
 import main.utils.PageBase;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
 import java.text.SimpleDateFormat;
@@ -65,6 +68,8 @@ public class ItemPage extends PageBase {
     private Map<String, String> offersMap;
     private Calendar calendar;
     private SimpleDateFormat time;
+    private ConfigurationParser config;
+    private int pageLoadTime;
 
     private String location;
     private String dateOfIssue;
@@ -120,6 +125,8 @@ public class ItemPage extends PageBase {
 
 
     public ItemPage() {
+        config = new ConfigurationParser();
+        pageLoadTime = config.getPageLoadTime();
         converter = new Converters();
         parametersMap = new HashMap<>();
         parametersStringMap = new HashMap<>();
@@ -137,7 +144,7 @@ public class ItemPage extends PageBase {
             if (mobileField.getText().length() < 5 && mobileField.getText().length() != 0) {
                 sleeper(500);
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
-            } else if (mobileField.getText().length() == 0){
+            } else if (mobileField.getText().length() == 0) {
                 this.mobile = 0;
             } else
                 this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
@@ -538,12 +545,13 @@ public class ItemPage extends PageBase {
             }
 
             saveTextToFile(offersMap.get(x), "lastLink", false);
+            changePageLoadTimeout(pageLoadTime);
 
             try {
                 driver.getDriver().get(offersMap.get(x));
             } catch (TimeoutException exception) {
-                System.out.println("Timeout noticed.");
-                driver.getDriver().get(offersMap.get(x));
+                new Actions(driver.getDriver()).sendKeys(Keys.ESCAPE).perform();
+                sleeper(5000);
             }
 
             if (!driver.getDriver().getCurrentUrl().equals(offersMap.get(x))) {
@@ -572,6 +580,8 @@ public class ItemPage extends PageBase {
             log.logInfo("Operation is done in {100.00%}, proceeded offers {0}");
         else
             log.logInfo("Operation is done in {100.00%}, proceeded offers {" + proceededCounter + "}, operation took {less then minute)");
+
+        changeBackPageLoadTimeout();
     }
 
     private String generateSQLQuery() {
