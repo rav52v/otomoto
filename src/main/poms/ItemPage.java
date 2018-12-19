@@ -76,7 +76,7 @@ public class ItemPage extends PageBase {
     private String title;
     private int price;
     private long offerId;
-    private long mobile;
+    private String mobile;
     private String sellerName;
     private String equipment;
     private String description;
@@ -85,7 +85,7 @@ public class ItemPage extends PageBase {
     private WebElement locationField;
 
     @FindBy(css = ".offer-header__actions span[data-path='multi_phone']")
-    private List<WebElement> mobileBtnField;
+    private WebElement mobileBtnField;
 
     @FindBy(css = ".offer-header__actions span.phone-number")
     private WebElement mobileField;
@@ -94,16 +94,16 @@ public class ItemPage extends PageBase {
     private WebElement sellerNameField;
 
     @FindBy(css = ".offer-content__metabar > div > span:first-child > span:last-child")
-    private List<WebElement> dateOfIssueField;
+    private WebElement dateOfIssueField;
 
     @FindBy(css = "div.offer-price")
-    private List<WebElement> priceField;
+    private WebElement priceField;
 
     @FindBy(css = "h1.offer-title.big-text")
     private List<WebElement> titleField;
 
     @FindBy(css = ".offer-content__metabar > div > span:last-child > span:last-child")
-    private List<WebElement> offerIdField;
+    private WebElement offerIdField;
 
     @FindBy(css = "a.read-more")
     private List<WebElement> readMoreBtnField;
@@ -112,7 +112,7 @@ public class ItemPage extends PageBase {
     private WebElement descriptionField;
 
     @FindBy(css = "span.showPhoneButton")
-    private List<WebElement> dislayNumberListField;
+    private List<WebElement> displayNumberListField;
 
     @FindBy(css = "h4.offer-features__title")
     private List<WebElement> equipmentField;
@@ -138,21 +138,20 @@ public class ItemPage extends PageBase {
     }
 
     private void setFeatures() {
-        if (isElementFound(mobileBtnField, 5000)) {
-            mobileBtnField.get(0).click();
-            // sprawdzanie, czy zdążył pobrać cały numer
-            if (mobileField.getText().length() < 5 && mobileField.getText().length() != 0) {
+        if (isElementFound(mobileBtnField, 5)) {
+            mobileBtnField.click();
+            if (mobileField.getText().length() < 6 && mobileField.getText().length() != 0) {
                 sleeper(500);
-                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
+                this.mobile = mobileField.getText();
             } else if (mobileField.getText().length() == 0) {
-                this.mobile = 0;
+                this.mobile = "";
             } else
-                this.mobile = Long.parseLong(mobileField.getText().replaceAll("[\\D]", ""));
+                this.mobile = mobileField.getText();
         } else
-            this.mobile = 0;
+            this.mobile = "";
 
-        if (isElementFound(dateOfIssueField, 500))
-            this.dateOfIssue = converter.getDateFromDateOfIssue(dateOfIssueField.get(0).getText().trim());
+        if (isElementFound(dateOfIssueField, 5))
+            this.dateOfIssue = converter.getDateFromDateOfIssue(dateOfIssueField.getText().trim());
         else
             this.dateOfIssue = null;
 
@@ -161,12 +160,12 @@ public class ItemPage extends PageBase {
         else
             this.title = null;
 
-        if (isElementFound(priceField, 500)) {
-            this.price = Integer.parseInt(priceField.get(0).getAttribute("data-price").replaceAll("[ ,.-]", ""));
+        if (isElementFound(priceField, 1)) {
+            this.price = Integer.parseInt(priceField.getAttribute("data-price").replaceAll("[ ,.-]", ""));
         }
 
-        if (isElementFound(offerIdField, 500)) {
-            this.offerId = Long.parseLong(offerIdField.get(0).getText());
+        if (isElementFound(offerIdField, 1)) {
+            this.offerId = Long.parseLong(offerIdField.getText());
         }
 
         if (isElementFound(equipmentField, 300)) {
@@ -179,14 +178,14 @@ public class ItemPage extends PageBase {
 
         if (isElementFound(readMoreBtnField, 100)) {
             click(readMoreBtnField.get(0));
-            if (isElementFound(dislayNumberListField, 0)) {
-                for (WebElement displayNumber : dislayNumberListField)
+            if (isElementFound(displayNumberListField, 0)) {
+                for (WebElement displayNumber : displayNumberListField)
                     click(displayNumber);
             }
             this.description = descriptionField.getText().replaceAll("['\"]", "-");
         } else {
-            if (isElementFound(dislayNumberListField, 0))
-                for (WebElement displayNumber : dislayNumberListField)
+            if (isElementFound(displayNumberListField, 0))
+                for (WebElement displayNumber : displayNumberListField)
                     click(displayNumber);
 
             this.description = descriptionField.getText().replaceAll("['\"]", "-");
@@ -595,8 +594,8 @@ public class ItemPage extends PageBase {
 
         parametersIntMap.put("price", this.price);
         parametersLongMap.put("offerId", this.offerId);
-        if (this.mobile != 0)
-            parametersLongMap.put("mobile", this.mobile);
+        if (!this.mobile.equals(""))
+            parametersStringMap.put("mobile", this.mobile);
 
         parametersStringMap.put("location", this.location);
         parametersStringMap.put("sellerName", this.sellerName);
@@ -635,7 +634,7 @@ public class ItemPage extends PageBase {
         parametersLongMap.clear();
         parametersIntMap.clear();
         parametersStringMap.clear();
-        this.mobile = 0;
+        this.mobile = null;
         this.equipment = null;
         this.description = null;
         query += querySecondPart.replaceAll("(, )$", "") + ")";

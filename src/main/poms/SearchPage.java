@@ -39,7 +39,7 @@ public class SearchPage extends PageBase {
     private List<WebElement> offersList;
 
     @FindBy(css = "span.icon-arrow_right")
-    private List<WebElement> nextPageBtn;
+    private WebElement nextPageBtn;
 
     @FindBy(css = "span.fleft.tab.selected > span.counter")
     private WebElement offersCounter;
@@ -86,9 +86,9 @@ public class SearchPage extends PageBase {
                 break;
             }
 
-            if (isElementFound(nextPageBtn, 2000)) {
+            if (isElementFound(nextPageBtn, 2)) {
                 try {
-                    click(nextPageBtn.get(0));
+                    click(nextPageBtn);
                 } catch (TimeoutException exception) {
                     new Actions(driver.getDriver()).sendKeys(Keys.ESCAPE).perform();
                     sleeper(5000);
@@ -100,7 +100,7 @@ public class SearchPage extends PageBase {
             if ((allOffers - getMappedOffersSize()) % 5 == 0)
                 log.logInfo("Adding offers to map, already mapped {" + getMappedOffersSize() + "}, actually page {" + actuallyPage + "/" + allAvailablePages + "}...");
 
-        } while (isElementFound(nextPageBtn, 3000));
+        } while (isElementFound(nextPageBtn, 2));
         changeBackPageLoadTimeout();
 
         addOffersFromCurrentPageToMap(idAndLinkHolder);

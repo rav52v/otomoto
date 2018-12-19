@@ -38,14 +38,27 @@ public abstract class PageBase {
         new WebDriverWait(driver.getDriver(), 10, 10).until(ExpectedConditions.visibilityOf(element));
     }
 
-    protected boolean isElementFound(List<WebElement> element, int milliSeconds) {
-        changeImplicitlyWaitTime(milliSeconds);
+    protected boolean isElementFound(WebElement element, int maxWaitTimeSec) {
+        changeImplicitlyWaitTime(0);
+        try {
+            new WebDriverWait(driver.getDriver(), maxWaitTimeSec, 10).until(ExpectedConditions.visibilityOf(element));
+            changeBackImplicitlyWaitTime();
+            return true;
+        } catch (TimeoutException e) {
+            changeBackImplicitlyWaitTime();
+            return false;
+        }
+    }
+
+    protected boolean isElementFound(List<WebElement> element, int maxWaitTimeMillis) {
+        changeImplicitlyWaitTime(maxWaitTimeMillis);
         if (element.size() > 0) {
             changeBackImplicitlyWaitTime();
             return true;
+        } else {
+            changeBackImplicitlyWaitTime();
+            return false;
         }
-        changeBackImplicitlyWaitTime();
-        return false;
     }
 
     protected void sleeper(int milliseconds) {
